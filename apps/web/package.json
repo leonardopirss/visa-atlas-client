@@ -1,0 +1,50 @@
+{
+  "name": "@visa-atlas/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:real": "playwright test --config playwright.real.config.ts",
+    "test:e2e:official": "VITE_API_PROXY_TARGET=http://127.0.0.1:3000 playwright test --config playwright.real.config.ts official-api-integration.spec.ts",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.104.5",
+    "@visa-atlas/contracts": "1.0.0",
+    "@visa-atlas/geo": "1.0.0",
+    "maplibre-gl": "^6.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.64.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^16.5.0",
+    "jsdom": "^27.2.0",
+    "msw": "^2.12.4",
+    "prettier": "^3.7.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.48.1",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  }
+}

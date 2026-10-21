@@ -1,0 +1,15 @@
+{
+  "name": "@visa-atlas/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript ../../specs/001-shared-api-contract/contracts/openapi.yaml -o src/generated/api.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.13.0"
+  }
+}

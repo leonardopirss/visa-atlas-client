@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+coverage
+**/playwright-report
+**/test-results
+packages/contracts/src/generated
+packages/geo/data
+package-lock.json
