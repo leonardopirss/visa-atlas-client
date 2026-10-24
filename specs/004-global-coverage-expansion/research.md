@@ -1,6 +1,6 @@
 # Research: Catálogo e fontes para expansão global
 
-**Feature:** `004-global-coverage-expansion` · **Status:** Fase 1 em andamento · **Data da verificação:** 2026-10-24
+**Feature:** `004-global-coverage-expansion` · **Status:** Fase 1 concluída · **Data da verificação:** 2026-10-24
 
 ## 1. Inventário ISO3 e política territorial — GC-T001
 
