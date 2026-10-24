@@ -51,3 +51,21 @@ test('integra os cinco endpoints reais e preserva zero e supressão', async ({
       '/api/v1/stats/map',
     ]);
 });
+
+test('abre país do catálogo mundial sem observação como indisponível, não como erro', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const search = page.getByRole('combobox', {
+    name: 'Buscar país de destino',
+  });
+
+  await search.fill('Rússia');
+  await page.getByRole('option', { name: 'Rússia RUS' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Rússia' })).toBeVisible();
+  await expect(
+    page.getByText('Sem dado disponível para este recorte'),
+  ).toBeVisible();
+  await expect(page.getByText('Não foi possível carregar o país')).toBeHidden();
+});

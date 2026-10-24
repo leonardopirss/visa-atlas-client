@@ -2,6 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/real-e2e',
+  testMatch:
+    process.env.E2E_OFFICIAL === 'true'
+      ? 'official-api-integration.spec.ts'
+      : 'api-integration.spec.ts',
   fullyParallel: false,
   forbidOnly: true,
   retries: 0,

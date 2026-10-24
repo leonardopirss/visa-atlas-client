@@ -17,13 +17,13 @@
 
 ## Phase 2 — Foundational: catálogo mundial (bloqueante para US1/US2)
 
-- [ ] GC-T007 [US2] Selecionar e documentar fonte/licença do catálogo mundial ISO2/ISO3/nome pt-BR/região em `visa-atlas-server/docs/data-sources.md` e `apps/web/README.md`.
-- [ ] GC-T008 [US2] Criar catálogo mundial versionado e sincronizador idempotente em `visa-atlas-server/src/modules/countries/data/` e `visa-atlas-server/src/modules/countries/services/country-catalog.service.ts`.
-- [ ] GC-T009 [US2] Integrar a sincronização do catálogo ao bootstrap/migration operacional sem inserir observações sintéticas em `visa-atlas-server/src/modules/countries/`.
-- [ ] GC-T010 [P] [US2] Criar testes unitários de unicidade ISO2/ISO3, campos obrigatórios e licença do catálogo em `visa-atlas-server/test/unit/country-catalog.spec.ts`.
-- [ ] GC-T011 [P] [US2] Criar teste de consistência entre ISO3 do catálogo backend e GeoJSON em `apps/web/src/features/globe/__tests__/country-catalog-coverage.test.ts`, documentando exceções legítimas.
-- [ ] GC-T012 [US2] Ajustar detalhes e timeseries para retornar ausência honesta para país conhecido sem release e manter erro tipado para ISO inexistente em `visa-atlas-server/src/modules/countries/` e `visa-atlas-server/src/modules/statistics/`.
-- [ ] GC-T013 [US2] Cobrir `200 + UNAVAILABLE`, zero válido, suprimido, país inexistente e banco sem releases em `visa-atlas-server/test/contract/` e `visa-atlas-server/test/integration/`.
+- [x] GC-T007 [US2] Selecionar e documentar fonte/licença do catálogo mundial ISO2/ISO3/nome pt-BR/região em `visa-atlas-server/docs/data-sources.md` e `apps/web/README.md`.
+- [x] GC-T008 [US2] Criar catálogo mundial versionado e sincronizador idempotente em `visa-atlas-server/src/modules/countries/data/` e `visa-atlas-server/src/modules/countries/services/country-catalog.service.ts`.
+- [x] GC-T009 [US2] Integrar a sincronização do catálogo ao bootstrap/migration operacional sem inserir observações sintéticas em `visa-atlas-server/src/modules/countries/`.
+- [x] GC-T010 [P] [US2] Criar testes unitários de unicidade ISO2/ISO3, campos obrigatórios e licença do catálogo em `visa-atlas-server/test/unit/country-catalog.spec.ts`.
+- [x] GC-T011 [P] [US2] Criar teste de consistência entre ISO3 do catálogo backend e GeoJSON em `apps/web/src/features/globe/__tests__/country-catalog-coverage.test.ts`, documentando exceções legítimas.
+- [x] GC-T012 [US2] Ajustar detalhes e timeseries para retornar ausência honesta para país conhecido sem release e manter erro tipado para ISO inexistente em `visa-atlas-server/src/modules/countries/` e `visa-atlas-server/src/modules/statistics/`.
+- [x] GC-T013 [US2] Cobrir `200 + UNAVAILABLE`, zero válido, suprimido, país inexistente e banco sem releases em `visa-atlas-server/test/contract/` e `visa-atlas-server/test/integration/`.
 
 **Independent Test US2:** `RUS`, `CAN` e `AUS` conhecidos sem observação retornam identidade + `UNAVAILABLE`; ISO3 inexistente retorna erro do contrato.
 

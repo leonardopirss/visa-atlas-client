@@ -35,17 +35,25 @@ Os testes de componente usam respostas sintéticas explicitamente rotuladas. O
 E2E local também possui uma API sintética no nível do browser para validar os
 estados visuais de forma determinística. A suíte `test:e2e:real` não intercepta
 rotas e valida os cinco endpoints contra o backend de teste, incluindo zero,
-supressão, programa verificado e histórico.
+supressão, país mundial sem observação, programa verificado e histórico. A suíte
+`test:e2e:official` é separada porque exige uma release oficial com pelo menos
+dois períodos já publicada no backend local da porta 3000.
 
 ## Cartografia, licença e atribuição
 
 - Renderização: MapLibre GL JS, licença BSD-3-Clause.
 - Fronteiras: Natural Earth 1:110m Admin 0 Countries, domínio público. A cópia
   normalizada vive em `packages/geo/data` e mantém ISO3 e MultiPolygon.
+- Catálogo mundial: snapshot derivado de `mledoze/countries` 5.1.0 e nomes
+  pt-BR materializados pelo CLDR 48, sob ODbL-1.0. O catálogo contém 249 códigos
+  atribuídos e é independente da presença de geometria ou estatística.
 - Tiles: nenhum provedor externo é usado nesta versão. O globo usa fundo local e
   o GeoJSON versionado, evitando chaves e requisições cartográficas de terceiros.
 - Atribuição: a interface exibe “Feito com Natural Earth” e o controle do mapa
   contém a mesma atribuição.
+
+Aviso do catálogo: “Contém informações de mledoze/countries,
+disponibilizadas sob a Open Database License (ODbL) v1.0.”
 
 ## CSP recomendada
 
