@@ -84,3 +84,20 @@ O GeoJSON não contém duplicatas, mas o campo chamado `iso3` deriva do código 
 | Licença | [Conteúdo do Department of State é domínio público salvo indicação contrária](https://2021-2025.state.gov/copyright-information/); atribuição recomendada, sem reutilizar selos/logos |
 | Métrica | `WORK_VISAS_ISSUED`, com grupo próprio por conjunto de classes e ano fiscal |
 | Decisão | **NEEDS_REVIEW** — sem adaptador até existir acesso automatizado oficial e estável ao arquivo estruturado |
+
+### 3.3 Austrália — GC-T004
+
+| Campo | Evidência/decisão |
+|---|---|
+| Órgão | Australian Government Department of Home Affairs |
+| Fonte primária | [Country profile — Brazil](https://www.homeaffairs.gov.au/research-and-statistics/statistics/country-profiles/profiles/brazil) e [Work visa statistics](https://www.homeaffairs.gov.au/research-and-statistics/statistics/visa-statistics/work) |
+| Evento | Concessões de visto; candidato inicial restrito a `Temporary Resident (Skilled Employment)` |
+| Cidadania | Perfil específico do Brasil; relatórios detalhados também possuem país de cidadania |
+| Finalidade/categorias | Não agregar Visitor, Student, Other ou permanent family. `Working Holiday Maker` deve permanecer categoria separada e não entrar automaticamente no total de skilled employment |
+| Unidade | Concessões de visto. Relatórios detalhados distinguem requerente principal/secundário e arredondam valores; perfil agrega categorias anuais |
+| Período | Ano financeiro australiano; perfil verificado cobre 2021–22 a 2024–25 |
+| Formato/acesso | Perfil HTML legível, mas sem arquivo tabular estável; relatórios detalhados são PDFs periódicos. Valores pequenos podem ser mascarados (`<5`) e números detalhados arredondados |
+| Qualidade | A série deve registrar supressão/arredondamento e mudanças de subclasses, como a substituição de TSS por Skills in Demand em dezembro de 2024 |
+| Licença | [Creative Commons Attribution 3.0 Australia](https://www.homeaffairs.gov.au/access-and-accountability/using-our-website/copyright-and-disclaimer), com atribuição ao Department of Home Affairs e exceções para material de terceiros/logos |
+| Métrica | `WORK_VISAS_ISSUED`, somente se o universo de requerentes e categorias for fixado por release |
+| Decisão | **NEEDS_REVIEW** — falta fonte tabular automatizável e definição estável do universo principal/secundário |
