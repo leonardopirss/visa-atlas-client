@@ -67,3 +67,20 @@ O GeoJSON não contém duplicatas, mas o campo chamado `iso3` deriva do código 
 | Métrica | `WORK_VISAS_ISSUED` existente; grupo próprio `uk-home-office-sponsored-work`, sem comparação com Eurostat |
 | Atualização | Trimestral, por snapshot/checksum; não consultar a planilha em requisição pública |
 | Decisão | **ACCEPTED** como primeiro adaptador nacional |
+
+### 3.2 Estados Unidos — GC-T003
+
+| Campo | Evidência/decisão |
+|---|---|
+| Órgão | U.S. Department of State, Bureau of Consular Affairs |
+| Fonte primária | [Nonimmigrant Visa Statistics](https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/nonimmigrant-visa-statistics.html), tabelas anuais e [emissões mensais](https://travel.state.gov/content/travel/en/legal/visa-law0/visa-statistics/nonimmigrant-visa-statistics/monthly-nonimmigrant-visa-issuances.html) |
+| Evento | Vistos não imigrantes emitidos por nacionalidade e classe |
+| Cidadania | `Brazil` está presente nos relatórios oficiais |
+| Finalidade/categorias candidatas | Primários `E1`, `E2`, `H1B`, `H1B1`, `H2A`, `H2B`, `L1`, `O1`, `P1`, `P2`, `P3`, `Q1` e `R1`; preservar exatamente o código da fonte. Excluir turismo/negócios `B`, estudo `F/M`, intercâmbio `J`, tripulação/trânsito `C/D`, diplomáticos `A/G/NATO`, trainees `H3`, pessoal de apoio `O2` e dependentes `E3D/H4/L2/O3/P4/R2` |
+| Unidade | Emissões de visto, não pessoas únicas, admissões, petições ou aprovações do USCIS |
+| Período | Ano fiscal nas tabelas anuais; mês/ano fiscal nos arquivos mensais |
+| Formato/acesso | Índice HTML estável, XLSX/PDF por release. O download XLSX anual retornou `403` na verificação automatizada, embora a página e PDFs sejam públicos; não usar bypass ou scraping frágil |
+| Qualidade | A metodologia do relatório mudou a partir do FY2019; releases e versão metodológica precisam permanecer separados |
+| Licença | [Conteúdo do Department of State é domínio público salvo indicação contrária](https://2021-2025.state.gov/copyright-information/); atribuição recomendada, sem reutilizar selos/logos |
+| Métrica | `WORK_VISAS_ISSUED`, com grupo próprio por conjunto de classes e ano fiscal |
+| Decisão | **NEEDS_REVIEW** — sem adaptador até existir acesso automatizado oficial e estável ao arquivo estruturado |
