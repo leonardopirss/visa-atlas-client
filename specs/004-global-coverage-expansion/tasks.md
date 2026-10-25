@@ -10,7 +10,7 @@
 - [x] GC-T002 [P] [US3] Completar o admission gate do Reino Unido com tabela, licença, evento, categorias, unidade, período e decisão em `specs/004-global-coverage-expansion/research.md`.
 - [x] GC-T003 [P] [US3] Completar o admission gate dos Estados Unidos, incluindo lista explícita de classes de trabalho incluídas/excluídas, em `specs/004-global-coverage-expansion/research.md`.
 - [x] GC-T004 [P] [US3] Completar o admission gate da Austrália, verificando formato automatizável e semântica das categorias, em `specs/004-global-coverage-expansion/research.md`.
-- [ ] GC-T005 [P] [US3] Completar o admission gate do Canadá e decidir se é necessário `WORK_PERMITS_ISSUED` ou outro `MetricType` em `specs/004-global-coverage-expansion/research.md`.
+- [x] GC-T005 [P] [US3] Completar o admission gate do Canadá e decidir se é necessário `WORK_PERMITS_ISSUED` ou outro `MetricType` em `specs/004-global-coverage-expansion/research.md`.
 - [ ] GC-T006 [US3] Registrar decisão FE/BE para qualquer mudança de enum ou DTO em `specs/001-shared-api-contract/decision.md`; se não houver mudança, registrar explicitamente “sem impacto contratual”.
 
 **Checkpoint:** não implementar adaptador nacional antes de sua decisão `ACCEPTED`; GC-T006 bloqueia mudanças no OpenAPI.
