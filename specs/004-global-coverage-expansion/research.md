@@ -1,6 +1,6 @@
 # Research: Catálogo e fontes para expansão global
 
-**Feature:** `004-global-coverage-expansion` · **Status:** Fase 1 em andamento · **Data da verificação:** 2026-10-24
+**Feature:** `004-global-coverage-expansion` · **Status:** Fase 1 concluída · **Data da verificação:** 2026-10-24
 
 ## 1. Inventário ISO3 e política territorial — GC-T001
 
@@ -84,3 +84,60 @@ O GeoJSON não contém duplicatas, mas o campo chamado `iso3` deriva do código 
 | Licença | [Conteúdo do Department of State é domínio público salvo indicação contrária](https://2021-2025.state.gov/copyright-information/); atribuição recomendada, sem reutilizar selos/logos |
 | Métrica | `WORK_VISAS_ISSUED`, com grupo próprio por conjunto de classes e ano fiscal |
 | Decisão | **NEEDS_REVIEW** — sem adaptador até existir acesso automatizado oficial e estável ao arquivo estruturado |
+
+### 3.3 Austrália — GC-T004
+
+| Campo | Evidência/decisão |
+|---|---|
+| Órgão | Australian Government Department of Home Affairs |
+| Fonte primária | [Country profile — Brazil](https://www.homeaffairs.gov.au/research-and-statistics/statistics/country-profiles/profiles/brazil) e [Work visa statistics](https://www.homeaffairs.gov.au/research-and-statistics/statistics/visa-statistics/work) |
+| Evento | Concessões de visto; candidato inicial restrito a `Temporary Resident (Skilled Employment)` |
+| Cidadania | Perfil específico do Brasil; relatórios detalhados também possuem país de cidadania |
+| Finalidade/categorias | Não agregar Visitor, Student, Other ou permanent family. `Working Holiday Maker` deve permanecer categoria separada e não entrar automaticamente no total de skilled employment |
+| Unidade | Concessões de visto. Relatórios detalhados distinguem requerente principal/secundário e arredondam valores; perfil agrega categorias anuais |
+| Período | Ano financeiro australiano; perfil verificado cobre 2021–22 a 2024–25 |
+| Formato/acesso | Perfil HTML legível, mas sem arquivo tabular estável; relatórios detalhados são PDFs periódicos. Valores pequenos podem ser mascarados (`<5`) e números detalhados arredondados |
+| Qualidade | A série deve registrar supressão/arredondamento e mudanças de subclasses, como a substituição de TSS por Skills in Demand em dezembro de 2024 |
+| Licença | [Creative Commons Attribution 3.0 Australia](https://www.homeaffairs.gov.au/access-and-accountability/using-our-website/copyright-and-disclaimer), com atribuição ao Department of Home Affairs e exceções para material de terceiros/logos |
+| Métrica | `WORK_VISAS_ISSUED`, somente se o universo de requerentes e categorias for fixado por release |
+| Decisão | **NEEDS_REVIEW** — falta fonte tabular automatizável e definição estável do universo principal/secundário |
+
+### 3.4 Canadá — GC-T005
+
+| Campo | Evidência/decisão |
+|---|---|
+| Órgão | Immigration, Refugees and Citizenship Canada (IRCC) |
+| Fonte primária | [Temporary Foreign Worker Program e International Mobility Program Work Permit Holders](https://open.canada.ca/data/en/dataset/360024f2-17e9-4558-bfc1-3616485d65b9?wbdisable=true) |
+| Evento | Titulares de permissão de trabalho no ano/mês em que uma ou mais permissões entraram em vigor; não “vistos emitidos” |
+| Cidadania | Campo `EN_COUNTRY_OF_CITIZENSHIP`; `Brazil` confirmado nos CSVs IMP e TFWP |
+| Finalidade/categorias | Importar IMP e TFWP como categorias originais separadas. Não somá-las sem comprovar regra de deduplicação de pessoas entre programas |
+| Unidade | Pessoas/titulares, com valores arredondados e `--` para observação protegida/indisponível; nunca converter `--` em zero |
+| Período | Mensal, com ano e trimestre; cobertura 2015 até o release corrente e atualização mensal |
+| Formato/acesso | Arquivos delimitados por tabulação publicados como CSV e XLSX oficiais, com links estáveis; os dois downloads foram validados. Metadados do portal informam atualização mensal |
+| Qualidade | A própria documentação alerta que uma pessoa pode possuir mais de um tipo de permissão no ano. IMP + TFWP exigem política de unicidade antes de totalização |
+| Licença | [Open Government Licence — Canada 2.0](https://open.canada.ca/en/open-government-licence-canada), com atribuição e sem uso de símbolos oficiais |
+| Métrica | Exige conceito novo, proposto como `WORK_PERMIT_HOLDERS_WITH_EFFECTIVE_PERMIT`; não cabe em `WORK_VISAS_ISSUED` nem no estoque `VALID_PERMIT_HOLDERS` |
+| Decisão | **NEEDS_REVIEW** — formato aprovado, mas publicação bloqueada até revisão do novo `MetricType` e regra IMP/TFWP |
+
+## 4. Matriz consolidada
+
+| Prioridade | Destino | Automação | Semântica | Licença | Contrato | Estado |
+|---:|---|---|---|---|---|---|
+| 1 | Reino Unido | XLSX trimestral validado | Concessões patrocinadas, requerentes principais | OGL | Enum existente | `ACCEPTED` |
+| 2 | Canadá | CSV mensal validado | Titulares com permissão que entrou em vigor | OGL Canada | Novo enum necessário | `NEEDS_REVIEW` |
+| 3 | Estados Unidos | XLSX/PDF público, XLSX bloqueou automação testada | Emissões por classe | Domínio público salvo exceção | Enum existente | `NEEDS_REVIEW` |
+| 4 | Austrália | HTML/PDF, sem tabela estável confirmada | Concessões skilled employment | CC BY 3.0 AU | Enum existente | `NEEDS_REVIEW` |
+
+## 5. Regras de decisão
+
+- `ACCEPTED`: todos os campos do admission gate foram comprovados e a semântica cabe em métrica existente ou em mudança contratual já aprovada.
+- `REJECTED`: fonte não oficial, sem cidadania `BRA`, sem evento identificável, sem licença compatível ou com granularidade insuficiente.
+- `NEEDS_REVIEW`: evidência promissora, mas existe bloqueio de semântica, contrato, licença ou automação.
+
+## 6. Proibições confirmadas
+
+- Não somar vistos, permissões e residências em um total global.
+- Não inferir aprovação a partir de estoque, entradas, patrocínios ou certificados.
+- Não derivar probabilidade sem aplicações e decisões do mesmo universo.
+- Não inferir cidade a partir do país, consulado emissor ou local da organização patrocinadora.
+- Não interpretar valor arredondado, mascarado ou suprimido como zero.
