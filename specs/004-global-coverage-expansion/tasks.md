@@ -7,7 +7,7 @@
 ## Phase 1 — Discovery e gates (bloqueante)
 
 - [x] GC-T001 [US1] Inventariar ISO3 da cartografia, catálogo atual e exceções territoriais; registrar diferenças e política de inclusão em `specs/004-global-coverage-expansion/research.md`.
-- [ ] GC-T002 [P] [US3] Completar o admission gate do Reino Unido com tabela, licença, evento, categorias, unidade, período e decisão em `specs/004-global-coverage-expansion/research.md`.
+- [x] GC-T002 [P] [US3] Completar o admission gate do Reino Unido com tabela, licença, evento, categorias, unidade, período e decisão em `specs/004-global-coverage-expansion/research.md`.
 - [ ] GC-T003 [P] [US3] Completar o admission gate dos Estados Unidos, incluindo lista explícita de classes de trabalho incluídas/excluídas, em `specs/004-global-coverage-expansion/research.md`.
 - [ ] GC-T004 [P] [US3] Completar o admission gate da Austrália, verificando formato automatizável e semântica das categorias, em `specs/004-global-coverage-expansion/research.md`.
 - [ ] GC-T005 [P] [US3] Completar o admission gate do Canadá e decidir se é necessário `WORK_PERMITS_ISSUED` ou outro `MetricType` em `specs/004-global-coverage-expansion/research.md`.

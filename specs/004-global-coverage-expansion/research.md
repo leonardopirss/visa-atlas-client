@@ -39,3 +39,31 @@ O GeoJSON não contém duplicatas, mas o campo chamado `iso3` deriva do código 
 4. Feature sem ISO oficial aprovado permanece visível como cartografia, mas não dispara consulta de país.
 5. País ISO sem geometria na escala 1:110m, como Malta e Liechtenstein, continua disponível por busca e lista. Não será inventado polígono.
 6. A Fase 2 deve escolher a referência mundial e definir o conjunto final de países/territórios ISO; os 177 polígonos não equivalem ao catálogo ISO mundial completo.
+
+## 2. Baseline aprovado
+
+| Destino | Fonte | Evento | Recorte | Métrica | Estado |
+|---|---|---|---|---|---|
+| Países cobertos pelo Eurostat | Eurostat `migr_resfirst` | Primeira autorização de residência | `BRA`, motivo `EMP`, unidade `PER`, anual | `FIRST_RESIDENCE_PERMITS_GRANTED` | `ACCEPTED` |
+
+## 3. Admission gates de novas fontes
+
+### 3.1 Reino Unido — GC-T002
+
+| Campo | Evidência/decisão |
+|---|---|
+| Órgão | UK Home Office |
+| Fonte primária | [Immigration system statistics data tables](https://www.gov.uk/government/statistical-data-sets/immigration-system-statistics-data-tables), tabela `Occ_D02` |
+| Dataset | “Sponsored work entry clearance visas by occupation and industry (SOC 2020)” |
+| Evento | Concessões de entry clearance visas de trabalho patrocinado |
+| População | Requerentes principais, pedidos feitos fora do Reino Unido; registros associados a Certificate of Sponsorship |
+| Cidadania | Campo `Nationality`; `Brazil` confirmado no arquivo oficial |
+| Finalidade/categorias | `Worker` e `Temporary Worker`, preservando `Visa type subgroup`; não incluir dependentes, estudo, visita ou família |
+| Unidade | Contagem de concessões; não pessoas únicas nem taxa de aprovação |
+| Período | Trimestral e ano-calendário. Nacionalidade brasileira disponível no arquivo SOC 2020 a partir de 2024; dados de Q1 2026 em diante são provisórios no release verificado |
+| Formato/acesso | XLSX publicado trimestralmente; abas descritivas, notas e dados normalizados. URL do arquivo muda por release, então o cliente deve descobrir o link a partir da página oficial ou usar configuração versionada |
+| Qualidade | Pequena parcela de vistos não vinculados a CoS fica fora do dataset; resultado deve carregar essa limitação. Um outcome pode corresponder a aplicação de período anterior |
+| Licença | [UK Open Government Licence](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/), com atribuição ao Home Office; o catálogo oficial identifica OGL |
+| Métrica | `WORK_VISAS_ISSUED` existente; grupo próprio `uk-home-office-sponsored-work`, sem comparação com Eurostat |
+| Atualização | Trimestral, por snapshot/checksum; não consultar a planilha em requisição pública |
+| Decisão | **ACCEPTED** como primeiro adaptador nacional |
