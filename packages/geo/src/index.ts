@@ -8,6 +8,17 @@ export const COUNTRY_BOUNDARIES_ATTRIBUTION =
 
 export const COUNTRY_ISO3_PROPERTY = "iso3";
 
+export const COUNTRY_BOUNDARY_ISO3_ALIASES: Readonly<
+  Record<string, string | null>
+> = {
+  SAH: "ESH",
+  PSX: "PSE",
+  SDS: "SSD",
+  CYN: "CYP",
+  SOL: "SOM",
+  KOS: null,
+};
+
 export type CountryBoundaryProperties = {
   iso3: string;
   name: string;

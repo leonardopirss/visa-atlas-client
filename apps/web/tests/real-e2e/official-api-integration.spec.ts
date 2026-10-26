@@ -41,3 +41,36 @@ test('consome os cinco endpoints reais com a release oficial publicada', async (
       '/api/v1/stats/map',
     ]);
 });
+
+test('seleciona o Canadá e apresenta o estoque anual IMP com a fonte oficial', async ({
+  page,
+}) => {
+  await page.goto('/?view=list');
+
+  const spain = page.getByRole('button', { name: /Espanha ESP/ });
+  const canada = page.getByRole('button', { name: /Canadá CAN/ });
+  await expect(spain).toContainText('Dados disponíveis');
+  await expect(canada).toContainText('Dados disponíveis');
+
+  await canada.click();
+  await expect(
+    page.getByRole('combobox', { name: 'Indicador estatístico' }),
+  ).toHaveValue('VALID_PERMIT_HOLDERS');
+  await expect(page.getByText('Período mais recente da fonte')).toBeVisible();
+  const dialog = page.getByRole('dialog', { name: 'Detalhes de Canadá' });
+  await expect(dialog.locator('.metric-value').first()).toContainText('15.655');
+  await expect(dialog.getByText(/não inclui o TFWP/)).toBeVisible();
+
+  await dialog.getByRole('tab', { name: 'Fontes' }).click();
+  await expect(
+    dialog.getByText('Immigration, Refugees and Citizenship Canada (IRCC)', {
+      exact: true,
+    }),
+  ).toBeVisible();
+
+  await dialog
+    .getByRole('button', { name: 'Fechar detalhes e retornar ao globo' })
+    .click();
+  await expect(spain).toContainText('Dados disponíveis');
+  await expect(canada).toContainText('Dados disponíveis');
+});

@@ -4,6 +4,7 @@ import {
   getCountryTimeseries,
   getFilterDefaults,
   getMapStatistics,
+  listAllCountries,
   listCountries,
 } from './client';
 import type {
@@ -15,6 +16,7 @@ import type {
 
 export const apiQueryKeys = {
   defaults: ['filters', 'defaults'] as const,
+  allCountries: ['countries', 'all'] as const,
   countries: (query: CountriesQuery) => ['countries', query] as const,
   map: (filters: FilterState) => ['stats', 'map', filters] as const,
   detail: (query: CountryQuery) => ['countries', 'detail', query] as const,
@@ -34,6 +36,13 @@ export const countriesQueryOptions = (query: CountriesQuery) =>
     queryKey: apiQueryKeys.countries(query),
     queryFn: ({ signal }) => listCountries(query, signal),
     staleTime: 60_000,
+  });
+
+export const allCountriesQueryOptions = () =>
+  queryOptions({
+    queryKey: apiQueryKeys.allCountries,
+    queryFn: ({ signal }) => listAllCountries(signal),
+    staleTime: 5 * 60_000,
   });
 
 export const mapStatisticsQueryOptions = (filters: FilterState) =>

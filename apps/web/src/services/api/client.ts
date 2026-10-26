@@ -1,5 +1,6 @@
 import type {
   CountriesResponse,
+  Country,
   CountryDetail,
   FilterDefaults,
   MapStatisticsResponse,
@@ -92,6 +93,22 @@ export async function listCountries(
     params.set('pageSize', String(query.pageSize));
   const suffix = params.size > 0 ? `?${params.toString()}` : '';
   return parseCountries(await request(`/countries${suffix}`, signal));
+}
+
+export async function listAllCountries(
+  signal?: AbortSignal,
+): Promise<Country[]> {
+  const pageSize = 100;
+  const firstPage = await listCountries({ page: 1, pageSize }, signal);
+  const countries = [...firstPage.data];
+  const totalPages = Math.ceil(firstPage.total / pageSize);
+
+  for (let page = 2; page <= totalPages; page += 1) {
+    const response = await listCountries({ page, pageSize }, signal);
+    countries.push(...response.data);
+  }
+
+  return countries;
 }
 
 export async function getMapStatistics(

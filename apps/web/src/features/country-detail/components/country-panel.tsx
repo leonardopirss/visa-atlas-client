@@ -51,6 +51,16 @@ export function CountryPanel({ iso3 }: { iso3: string }) {
         <p>{detail.data.country.region}</p>
         <h2>{detail.data.country.name}</h2>
       </header>
+      {detail.data.statistics.value === null && (
+        <section className="availability-empty" aria-labelledby="no-data-title">
+          <h3 id="no-data-title">País disponível, dado ainda não publicado</h3>
+          <p>
+            {detail.data.country.name} faz parte do catálogo mundial, mas não há
+            observação oficial para os filtros atuais. Ajuste o recorte ou use
+            “Somente com dados” para explorar outros destinos.
+          </p>
+        </section>
+      )}
       <CountryTabs detail={detail.data} filters={filters} />
     </MobileBottomSheet>
   );

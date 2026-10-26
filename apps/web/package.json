@@ -12,7 +12,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:real": "playwright test --config playwright.real.config.ts",
-    "test:e2e:official": "VITE_API_PROXY_TARGET=http://127.0.0.1:3000 playwright test --config playwright.real.config.ts official-api-integration.spec.ts",
+    "test:e2e:official": "E2E_OFFICIAL=true VITE_API_PROXY_TARGET=http://127.0.0.1:3000 playwright test --config playwright.real.config.ts",
     "typecheck": "tsc -b --pretty false"
   },
   "dependencies": {

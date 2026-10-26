@@ -8,34 +8,21 @@ export const COUNTRY_OUTLINE_LAYER_ID = 'country-outline';
 
 export function countryFillExpression(
   selectedIso3: string | null,
+  availableIso3: string[] = [],
+  coverageFailed = false,
 ): ExpressionSpecification {
-  if (selectedIso3 !== null) {
-    return [
-      'case',
-      ['==', ['get', COUNTRY_ISO3_PROPERTY], selectedIso3],
-      MAP_COLORS.selected,
-      MAP_COLORS.inactive,
-    ];
-  }
-
   return [
-    'match',
-    ['get', 'continent'],
-    'Africa',
-    '#94b791',
-    'Asia',
-    '#9bbc95',
-    'Europe',
-    '#a6c58f',
-    'North America',
-    '#86aa91',
-    'Oceania',
-    '#a5c482',
-    'Seven seas (open ocean)',
-    '#81989c',
-    'South America',
-    '#8caf8e',
-    '#91a79a',
+    'case',
+    ['==', ['get', COUNTRY_ISO3_PROPERTY], selectedIso3 ?? ''],
+    MAP_COLORS.selected,
+    coverageFailed
+      ? MAP_COLORS.unknown
+      : [
+          'case',
+          ['in', ['get', COUNTRY_ISO3_PROPERTY], ['literal', availableIso3]],
+          MAP_COLORS.available,
+          MAP_COLORS.unavailable,
+        ],
   ];
 }
 
@@ -59,12 +46,14 @@ export function applyCountrySelection(
   map: MapLibreMap,
   selectedIso3: string | null,
   hoveredIso3: string | null,
+  availableIso3: string[] = [],
+  coverageFailed = false,
 ): void {
   if (!map.getLayer(COUNTRY_FILL_LAYER_ID)) return;
   map.setPaintProperty(
     COUNTRY_FILL_LAYER_ID,
     'fill-color',
-    countryFillExpression(selectedIso3),
+    countryFillExpression(selectedIso3, availableIso3, coverageFailed),
   );
   map.setPaintProperty(
     COUNTRY_OUTLINE_LAYER_ID,

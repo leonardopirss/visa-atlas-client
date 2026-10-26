@@ -49,3 +49,39 @@ Definição proposta: número de pessoas de uma cidadania com uma ou mais permis
 - Adaptador do Reino Unido pode prosseguir com `WORK_VISAS_ISSUED` após catálogo/UX.
 - Canadá permanece `NEEDS_REVIEW` até aprovação explícita da mudança contratual.
 - Estados Unidos e Austrália permanecem `NEEDS_REVIEW` por automação/formato, não por falta de enum.
+
+### Encerramento da Fase 4 — N/A
+
+GC-T023–GC-T026 foram revisadas e encerradas como `N/A` em 2026-10-24. A
+decisão GC-D001 confirmou que catálogo mundial, estados de cobertura e a fonte
+UK `Occ_D02` já cabem nos DTOs e enums existentes. Portanto, não houve edição
+artificial do OpenAPI, regeneração de tipos ou alteração do snapshot backend.
+O contrato continua com exatamente cinco operações. A proposta canadense
+permanece bloqueada e deverá abrir uma revisão contratual própria antes de
+qualquer implementação.
+
+## GC-D002 — Canadá anual (IMP)
+
+**Data:** 2026-10-25
+**Status:** Aprovado sem alteração de contrato
+
+A revisão selecionou um recurso diferente do arquivo mensal avaliado em
+GC-D001: o estoque anual de titulares do International Mobility Program (IMP),
+para finalidade de trabalho, com permissão válida em 31 de dezembro e
+desagregação por cidadania. Esse evento cabe semanticamente no enum já existente
+`VALID_PERMIT_HOLDERS`.
+
+Não há novo enum, DTO, endpoint ou campo OpenAPI. O Canadá usa dataset,
+release, unidade `HOLDERS`, categoria `IMP` e `comparisonGroupId` próprios. O
+TFWP não é ingerido nem somado; portanto, o valor não pode ser apresentado como
+total de permissões de trabalho do Canadá. Valores `--` permanecem
+`SUPPRESSED/null` e os demais conservam o arredondamento oficial.
+
+Esta decisão substitui somente o bloqueio canadense de GC-D001. A interpretação
+do arquivo mensal como permissões que entraram em vigor continua fora do escopo
+e exigiria nova decisão.
+
+Em 2026-10-25, a descrição de `YearOptional` foi delimitada por aspas para
+corrigir a sintaxe YAML que fazia a vírgula do texto ser interpretada como uma
+propriedade OpenAPI. A correção foi replicada no snapshot backend e não altera
+rotas, parâmetros, schemas, enums, tipos gerados ou semântica do contrato.

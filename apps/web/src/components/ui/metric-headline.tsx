@@ -8,7 +8,7 @@ export const METRIC_LABELS: Record<MetricType, string> = {
   APPLICATIONS_RECEIVED: 'Solicitações recebidas',
   APPLICATIONS_REFUSED: 'Solicitações recusadas',
   DECISIONS_GRANTED: 'Decisões favoráveis',
-  VALID_PERMIT_HOLDERS: 'Titulares de autorização válida',
+  VALID_PERMIT_HOLDERS: 'Titulares de permissão de trabalho válida',
 };
 
 function missingValueLabel(status: Statistic['dataStatus']): string {
@@ -32,17 +32,21 @@ export function MetricHeadline({ statistic }: { statistic: Statistic }) {
           <span>{statistic.unit}</span>
         </p>
       )}
-      <p className="metric-period">Período da fonte: {statistic.period}</p>
+      <p className="metric-period">
+        Período da fonte: {statistic.period} · Unidade: {statistic.unit}
+      </p>
       <DataStatus
         status={statistic.dataStatus}
         freshness={statistic.freshness}
       />
-      {statistic.metricType === 'FIRST_RESIDENCE_PERMITS_GRANTED' && (
-        <p className="semantic-note">
-          Este indicador mede primeiras autorizações de residência, não emissões
-          de visto consular nem probabilidade individual de aprovação.
-        </p>
-      )}
+      <p className="semantic-note">
+        Este número é um volume administrativo publicado pela fonte oficial, não
+        uma taxa nem uma probabilidade individual de aprovação.
+        {statistic.metricType === 'FIRST_RESIDENCE_PERMITS_GRANTED' &&
+          ' Em especial, primeiras autorizações de residência não equivalem a emissões de visto consular.'}
+        {statistic.metricType === 'VALID_PERMIT_HOLDERS' &&
+          ' No Canadá, o recorte representa titulares brasileiros do IMP com permissão de trabalho válida em 31 de dezembro; não inclui o TFWP e os valores são arredondados pela fonte.'}
+      </p>
     </section>
   );
 }

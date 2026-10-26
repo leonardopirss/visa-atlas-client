@@ -25,7 +25,10 @@ export const GLOBE_STYLE: StyleSpecification = {
 export const MAP_COLORS = {
   selected: '#30D883',
   selectedOutline: '#D8FFEA',
-  inactive: '#82919a',
+  available: '#8d9aa2',
+  unavailable: '#4b565e',
+  unknown: '#68737b',
+  inactive: '#4b565e',
   hover: '#e8fff2',
   outline: '#93b5bd',
 } as const;
