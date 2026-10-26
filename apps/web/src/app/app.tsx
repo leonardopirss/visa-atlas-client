@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
 import { useAppState } from './app-state';
 import { FilterBar } from '../features/filters/filter-bar';
 import { CountryPanel } from '../features/country-detail/components/country-panel';
@@ -7,7 +6,8 @@ import { CountryListFallback } from '../features/globe/components/country-list-f
 import { CountrySearch } from '../features/globe/components/country-search';
 import { GlobeMap } from '../features/globe/components/globe-map';
 import { useCountrySelection } from '../features/globe/hooks/use-country-selection';
-import { mapStatisticsQueryOptions } from '../services/api/queries';
+import { CoverageLegend } from '../features/coverage/components/coverage-legend';
+import { useCoverage } from '../features/coverage/use-coverage';
 import visaAtlasIcon from '../assets/visa-atlas-icon.svg';
 
 function Brand() {
@@ -32,16 +32,26 @@ export function App() {
     () => new URLSearchParams(window.location.search).get('view') === 'list',
   );
   const handleUnavailable = useCallback(() => setListMode(true), []);
-  const mapStatistics = useQuery(mapStatisticsQueryOptions(filters));
-  const availableCount = mapStatistics.data?.countries.filter(
-    (country) => country.statistic.value !== null,
-  ).length;
+  const coverage = useCoverage(filters);
+  const countryNamesByIso3 = useMemo(
+    () =>
+      Object.fromEntries(
+        (coverage.catalog.data ?? []).map((country) => [
+          country.iso3,
+          country.name,
+        ]),
+      ),
+    [coverage.catalog.data],
+  );
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <Brand />
-        <CountrySearch onSelect={selectCountry} />
+        <CountrySearch
+          onSelect={selectCountry}
+          coverageByIso3={coverage.summary.byIso3}
+        />
         <button
           type="button"
           className="view-toggle"
@@ -60,6 +70,11 @@ export function App() {
             <CountryListFallback
               onSelect={selectCountry}
               selectedIso3={selectedCountryIso3}
+              countries={coverage.catalog.data ?? []}
+              coverageByIso3={coverage.summary.byIso3}
+              isPending={coverage.catalog.isPending}
+              isError={coverage.catalog.isError}
+              onRetry={() => void coverage.catalog.refetch()}
             />
           </>
         ) : (
@@ -67,6 +82,9 @@ export function App() {
             selectedIso3={selectedCountryIso3}
             onSelect={selectCountry}
             onUnavailable={handleUnavailable}
+            coverageByIso3={coverage.summary.byIso3}
+            countryNamesByIso3={countryNamesByIso3}
+            coverageFailed={coverage.statistics.isError}
           />
         )}
 
@@ -81,16 +99,13 @@ export function App() {
         )}
 
         <div className="map-data-state" aria-live="polite">
-          {mapStatistics.isPending && <span>Carregando cobertura…</span>}
-          {mapStatistics.isError && (
-            <span>Estatísticas do mapa indisponíveis</span>
-          )}
-          {mapStatistics.data !== undefined && (
-            <span>
-              {mapStatistics.data.legendLabel ?? 'Cobertura oficial'} ·{' '}
-              {availableCount ?? 0} países com dado
-            </span>
-          )}
+          <CoverageLegend
+            summary={coverage.summary}
+            isPending={
+              coverage.catalog.isPending || coverage.statistics.isPending
+            }
+            hasError={coverage.statistics.hasError}
+          />
         </div>
 
         {selectedCountryIso3 !== null && (

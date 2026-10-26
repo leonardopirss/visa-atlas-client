@@ -196,6 +196,44 @@ input:focus-visible {
   cursor: pointer;
   text-align: left;
 }
+.country-result-meta {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+}
+.availability-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 8px 8px;
+  color: #c6d2d8;
+  font-size: 12px;
+}
+.availability-filter input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--green);
+  box-shadow: none;
+}
+.availability-badge {
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 9px;
+}
+.availability-available {
+  color: #9af1c2 !important;
+  background: rgba(48, 216, 131, 0.12);
+}
+.availability-unavailable {
+  color: #c4cdd2 !important;
+  background: rgba(151, 166, 176, 0.12);
+}
+.availability-unknown_error {
+  color: #f1cf86 !important;
+  background: rgba(240, 201, 120, 0.1);
+}
 .search-results button:hover,
 .search-results button:focus-visible {
   background: rgba(48, 216, 131, 0.12);
@@ -243,6 +281,23 @@ input:focus-visible {
   margin-top: 0;
   font-size: 13px;
 }
+.filter-select {
+  min-width: 190px;
+}
+.filter-select select {
+  width: 100%;
+  border: 0;
+  color: #eaf0f3;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.filter-select select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
 .filter-ok,
 .filter-warning {
   flex: 0 0 auto;
@@ -273,12 +328,33 @@ main {
   min-height: 620px;
   overflow: hidden;
 }
+.globe-region,
 .globe-map {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   background: transparent;
+}
+.map-tooltip {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  gap: 3px;
+  min-width: 130px;
+  padding: 9px 11px;
+  border: 1px solid rgba(216, 255, 234, 0.38);
+  border-radius: 12px;
+  color: white;
+  background: rgba(23, 42, 51, 0.96);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.34);
+  cursor: pointer;
+  text-align: left;
+  pointer-events: auto;
+}
+.map-tooltip span {
+  color: #aebdc5;
+  font-size: 10px;
 }
 .globe-map .maplibregl-canvas {
   outline: none;
@@ -350,6 +426,31 @@ main {
   background: rgba(23, 34, 43, 0.82);
   font-size: 11px;
 }
+.coverage-legend {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-items: center;
+  gap: 5px 8px;
+}
+.coverage-key {
+  width: 11px;
+  height: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+}
+.coverage-key.coverage-available {
+  background: #8d9aa2;
+}
+.coverage-key.coverage-unavailable {
+  background: #4b565e;
+}
+.coverage-legend [role='status'],
+.coverage-warning {
+  grid-column: 1 / -1;
+}
+.coverage-warning {
+  color: #f1cf86;
+}
 
 .country-sheet {
   position: fixed;
@@ -414,6 +515,24 @@ main {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
+}
+.availability-empty {
+  margin: 0 0 16px;
+  padding: 14px;
+  border: 1px dashed rgba(240, 201, 120, 0.35);
+  border-radius: 14px;
+  background: rgba(240, 201, 120, 0.07);
+}
+.availability-empty h3 {
+  margin: 0 0 7px;
+  color: #f2d695;
+  font-size: 14px;
+}
+.availability-empty p {
+  margin: 0;
+  color: #b9b8aa;
+  font-size: 11px;
+  line-height: 1.55;
 }
 .tabs {
   display: flex;
@@ -703,6 +822,10 @@ main {
 .country-fallback input {
   padding-left: 18px;
 }
+.fallback-availability-filter {
+  width: fit-content;
+  margin: 12px 0 0;
+}
 .country-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -870,7 +993,10 @@ main {
     font-size: 12px;
   }
   .map-data-state {
-    display: none;
+    top: 150px;
+    right: 12px;
+    bottom: auto;
+    max-width: calc(100vw - 24px);
   }
   .country-sheet {
     top: auto;

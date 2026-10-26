@@ -1,21 +1,42 @@
-import { useDeferredValue, useId, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { countriesQueryOptions } from '../../../services/api/queries';
+import { useDeferredValue, useId, useMemo, useState } from 'react';
+import type { Country } from '@visa-atlas/contracts';
+import { coverageLabel, type CoverageStatus } from '../../coverage/coverage';
 
 type CountryListFallbackProps = {
   onSelect: (iso3: string) => void;
   selectedIso3: string | null;
+  countries: Country[];
+  coverageByIso3: Record<string, CoverageStatus>;
+  isPending: boolean;
+  isError: boolean;
+  onRetry: () => void;
 };
 
 export function CountryListFallback({
   onSelect,
   selectedIso3,
+  countries,
+  coverageByIso3,
+  isPending,
+  isError,
+  onRetry,
 }: CountryListFallbackProps) {
   const [search, setSearch] = useState('');
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
   const deferredSearch = useDeferredValue(search);
   const searchId = useId();
-  const countries = useQuery(
-    countriesQueryOptions({ search: deferredSearch, page: 1, pageSize: 100 }),
+  const visibleCountries = useMemo(
+    () =>
+      countries.filter((country) => {
+        const matchesSearch = country.name
+          .toLocaleLowerCase('pt-BR')
+          .includes(deferredSearch.trim().toLocaleLowerCase('pt-BR'));
+        return (
+          matchesSearch &&
+          (!onlyAvailable || coverageByIso3[country.iso3] === 'AVAILABLE')
+        );
+      }),
+    [countries, coverageByIso3, deferredSearch, onlyAvailable],
   );
 
   return (
@@ -36,19 +57,29 @@ export function CountryListFallback({
         placeholder="Digite o nome do país"
         onChange={(event) => setSearch(event.target.value)}
       />
-      {countries.isPending && <p role="status">Carregando países…</p>}
-      {countries.isError && (
+      <label className="availability-filter fallback-availability-filter">
+        <input
+          type="checkbox"
+          checked={onlyAvailable}
+          onChange={(event) => setOnlyAvailable(event.target.checked)}
+        />
+        Somente com dados
+      </label>
+      {isPending && <p role="status">Carregando países…</p>}
+      {isError && (
         <div className="inline-error" role="alert">
           <p>Não foi possível carregar a lista de países.</p>
-          <button type="button" onClick={() => void countries.refetch()}>
+          <button type="button" onClick={onRetry}>
             Tentar novamente
           </button>
         </div>
       )}
-      {countries.data?.data.length === 0 && <p>Nenhum país encontrado.</p>}
-      {countries.data !== undefined && countries.data.data.length > 0 && (
+      {!isPending && !isError && visibleCountries.length === 0 && (
+        <p>Nenhum país encontrado.</p>
+      )}
+      {visibleCountries.length > 0 && (
         <ul className="country-list">
-          {countries.data.data.map((country) => (
+          {visibleCountries.map((country) => (
             <li key={country.iso3}>
               <button
                 type="button"
@@ -57,7 +88,14 @@ export function CountryListFallback({
                 onClick={() => onSelect(country.iso3)}
               >
                 <span>{country.name}</span>
-                <small>{country.iso3}</small>
+                <span className="country-result-meta">
+                  <small>{country.iso3}</small>
+                  <small
+                    className={`availability-badge availability-${coverageByIso3[country.iso3]?.toLowerCase() ?? 'unknown_error'}`}
+                  >
+                    {coverageLabel(coverageByIso3[country.iso3])}
+                  </small>
+                </span>
               </button>
             </li>
           ))}
