@@ -17,6 +17,20 @@ const detailUrl = '*/api/v1/countries/:iso3';
 const timeseriesUrl = '*/api/v1/countries/:iso3/timeseries';
 
 describe('CountryPanel', () => {
+  it('exibe a bandeira ao lado do nome do país', async () => {
+    server.use(
+      http.get(detailUrl, () => HttpResponse.json(countryDetailFixture())),
+    );
+    renderApp(<CountryPanel iso3="ESP" />);
+
+    const heading = await screen.findByRole('heading', { name: 'Espanha' });
+    expect(heading).toHaveTextContent('🇪🇸Espanha');
+    expect(heading.querySelector('.country-flag')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
+  });
+
   it('distingue zero oficial de ausência de dados', async () => {
     const user = userEvent.setup();
     server.use(

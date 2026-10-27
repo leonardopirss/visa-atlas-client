@@ -9,7 +9,7 @@ data in the public domain. The checked-in copy retains only `iso3`, `name` and
 - Terms: https://www.naturalearthdata.com/about/terms-of-use/
 - Retrieved: 2026-10-20
 
-The application displays the optional attribution “Made with Natural Earth”.
+The source and public-domain terms remain documented here for traceability.
 
 ## Consistência com o catálogo mundial
 

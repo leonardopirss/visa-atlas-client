@@ -1,3 +1,15 @@
-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle id="Visa Atlas icon" cx="19.5" cy="19.5" r="19.5" fill="#E8EDF4" fill-opacity="0.98"/>
+<svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Visa Atlas travel backpack</title>
+  <circle cx="19.5" cy="19.5" r="19.5" fill="#E8EDF4"/>
+  <path d="M15.25 12V10.75C15.25 8.68 16.93 7 19 7H20C22.07 7 23.75 8.68 23.75 10.75V12" stroke="#183344" stroke-width="2.25" stroke-linecap="round"/>
+  <path d="M10 18H8.75C7.78 18 7 18.78 7 19.75V26.25C7 27.22 7.78 28 8.75 28H10V18Z" fill="#22B86F" stroke="#183344" stroke-width="1.5"/>
+  <path d="M29 18H30.25C31.22 18 32 18.78 32 19.75V26.25C32 27.22 31.22 28 30.25 28H29V18Z" fill="#22B86F" stroke="#183344" stroke-width="1.5"/>
+  <rect x="9.75" y="11.25" width="19.5" height="22" rx="5.25" fill="#30D883" stroke="#183344" stroke-width="1.75"/>
+  <path d="M10.5 18.25H28.5" stroke="#183344" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M14 11.75V15.5H25V11.75" fill="#23BC72"/>
+  <path d="M14 11.75V15.5H25V11.75" stroke="#183344" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="13" y="21" width="13" height="8.5" rx="3.25" fill="#F9FBFD" stroke="#183344" stroke-width="1.5"/>
+  <circle cx="19.5" cy="25.25" r="2.5" fill="#DFF8EC" stroke="#183344" stroke-width="1.1"/>
+  <path d="M17.15 25.25H21.85M19.5 22.75C20.1 23.43 20.43 24.3 20.43 25.25C20.43 26.2 20.1 27.07 19.5 27.75C18.9 27.07 18.57 26.2 18.57 25.25C18.57 24.3 18.9 23.43 19.5 22.75Z" stroke="#183344" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M26.75 8.5L27.3 10.2L29 10.75L27.3 11.3L26.75 13L26.2 11.3L24.5 10.75L26.2 10.2L26.75 8.5Z" fill="#F2B84B" stroke="#183344" stroke-width="0.65" stroke-linejoin="round"/>
 </svg>

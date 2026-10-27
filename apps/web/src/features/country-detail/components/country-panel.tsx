@@ -3,6 +3,12 @@ import { useCountryDetail } from '../hooks/use-country-detail';
 import { CountryTabs } from './country-tabs';
 import { MobileBottomSheet } from './mobile-bottom-sheet';
 
+function iso2ToFlag(iso2: string): string {
+  return [...iso2.toUpperCase()]
+    .map((character) => String.fromCodePoint(127397 + character.charCodeAt(0)))
+    .join('');
+}
+
 export function CountryPanel({ iso3 }: { iso3: string }) {
   const { filters, clearSelection } = useAppState();
   const detail = useCountryDetail(iso3, filters);
@@ -49,7 +55,12 @@ export function CountryPanel({ iso3 }: { iso3: string }) {
       <header className="country-heading">
         <span className="country-code">{detail.data.country.iso3}</span>
         <p>{detail.data.country.region}</p>
-        <h2>{detail.data.country.name}</h2>
+        <h2>
+          <span className="country-flag" aria-hidden="true">
+            {iso2ToFlag(detail.data.country.iso2)}
+          </span>
+          <span>{detail.data.country.name}</span>
+        </h2>
       </header>
       {detail.data.statistics.value === null && (
         <section className="availability-empty" aria-labelledby="no-data-title">

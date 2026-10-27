@@ -15,7 +15,6 @@ import type {
 } from 'maplibre-gl';
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import {
-  COUNTRY_BOUNDARIES_ATTRIBUTION,
   COUNTRY_BOUNDARIES_URL,
   COUNTRY_BOUNDARY_ISO3_ALIASES,
   COUNTRY_ISO3_PROPERTY,
@@ -258,18 +257,10 @@ export function GlobeMap({
           new maplibre.NavigationControl({ showCompass: true }),
           'top-right',
         );
-        nextMap.addControl(
-          new maplibre.AttributionControl({
-            compact: false,
-            customAttribution: COUNTRY_BOUNDARIES_ATTRIBUTION,
-          }),
-          'bottom-right',
-        );
         nextMap.on('load', () => {
           nextMap.addSource(COUNTRY_SOURCE_ID, {
             type: 'geojson',
             data: boundaries,
-            attribution: COUNTRY_BOUNDARIES_ATTRIBUTION,
           });
           nextMap.addSource(COUNTRY_LABEL_SOURCE_ID, {
             type: 'geojson',
