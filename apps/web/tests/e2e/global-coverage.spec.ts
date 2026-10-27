@@ -5,6 +5,28 @@ test.beforeEach(async ({ page }) => {
   await installSyntheticApi(page);
 });
 
+test('recolhe e reabre os filtros do mapa', async ({ page }) => {
+  await page.goto('/');
+
+  const panel = page.getByRole('region', { name: 'Exploração e filtros' });
+  const hideFilters = page.getByRole('button', { name: 'Ocultar filtros' });
+  await expect(panel).toBeVisible();
+  await expect(hideFilters).toHaveAttribute('aria-expanded', 'true');
+
+  await hideFilters.click();
+  const showFilters = page.getByRole('button', { name: 'Mostrar filtros' });
+  await expect(showFilters).toHaveAttribute('aria-expanded', 'false');
+  await expect(
+    page.getByRole('region', { name: 'Filtros da consulta' }),
+  ).toBeHidden();
+
+  await showFilters.click();
+  await expect(hideFilters).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    page.getByRole('region', { name: 'Filtros da consulta' }),
+  ).toBeVisible();
+});
+
 test('expõe legenda, badges e filtro de países com dados', async ({ page }) => {
   await page.goto('/?view=list');
 

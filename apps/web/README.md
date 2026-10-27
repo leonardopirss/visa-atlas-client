@@ -49,8 +49,8 @@ dois períodos já publicada no backend local da porta 3000.
   atribuídos e é independente da presença de geometria ou estatística.
 - Tiles: nenhum provedor externo é usado nesta versão. O globo usa fundo local e
   o GeoJSON versionado, evitando chaves e requisições cartográficas de terceiros.
-- Atribuição: a interface exibe “Feito com Natural Earth” e o controle do mapa
-  contém a mesma atribuição.
+- A origem e a licença dos dados cartográficos estão registradas na documentação
+  do pacote `@visa-atlas/geo`.
 
 Aviso do catálogo: “Contém informações de mledoze/countries,
 disponibilizadas sob a Open Database License (ODbL) v1.0.”

@@ -15,7 +15,6 @@ function Brand() {
     <a className="brand" href="/" aria-label="Visa Atlas — início">
       <span className="brand-icon" aria-hidden="true">
         <img src={visaAtlasIcon} alt="" width="39" height="39" />
-        <span>✦</span>
       </span>
       <span className="brand-copy">
         <strong>visa atlas</strong>
@@ -31,6 +30,7 @@ export function App() {
   const [listMode, setListMode] = useState(
     () => new URLSearchParams(window.location.search).get('view') === 'list',
   );
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const handleUnavailable = useCallback(() => setListMode(true), []);
   const coverage = useCoverage(filters);
   const countryNamesByIso3 = useMemo(
@@ -88,13 +88,46 @@ export function App() {
           />
         )}
 
-        {!listMode && (
-          <section className="map-intro" aria-label="Introdução">
-            <span className="eyebrow">Explore destinos</span>
-            <h1>Explorar o mundo</h1>
-            <p>Descubra vistos e oportunidades por país.</p>
-            <FilterBar />
-            <small>Arraste para girar o planeta</small>
+        {!listMode && selectedCountryIso3 === null && (
+          <section
+            id="map-filter-panel"
+            className={`map-intro${filtersCollapsed ? ' is-collapsed' : ''}`}
+            aria-label="Exploração e filtros"
+          >
+            <div className="map-intro-header">
+              <div className="map-intro-heading">
+                <span className="eyebrow">Explore destinos</span>
+                <span className="map-intro-title">Filtros do mapa</span>
+              </div>
+              <button
+                type="button"
+                className="map-intro-toggle"
+                aria-controls="map-filter-content"
+                aria-expanded={!filtersCollapsed}
+                aria-label={
+                  filtersCollapsed ? 'Mostrar filtros' : 'Ocultar filtros'
+                }
+                onClick={() => setFiltersCollapsed((current) => !current)}
+              >
+                <span className="map-intro-toggle-label">
+                  {filtersCollapsed ? 'Filtros' : 'Recolher'}
+                </span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  width="16"
+                  height="16"
+                >
+                  <path d="m12.5 4.75-5 5.25 5 5.25" />
+                </svg>
+              </button>
+            </div>
+            <div id="map-filter-content" hidden={filtersCollapsed}>
+              <h1>Explorar o mundo</h1>
+              <p>Descubra vistos e oportunidades por país.</p>
+              <FilterBar />
+              <small>Arraste para girar o planeta</small>
+            </div>
           </section>
         )}
 
@@ -117,13 +150,6 @@ export function App() {
         <span>
           Dados estatísticos fornecidos exclusivamente pela API Visa Atlas.
         </span>
-        <a
-          href="https://www.naturalearthdata.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Feito com Natural Earth ↗
-        </a>
       </footer>
     </div>
   );
