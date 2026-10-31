@@ -663,7 +663,7 @@ main {
 .source-badge {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
 .source-badge strong,
@@ -674,6 +674,19 @@ main {
   margin-top: 3px;
   color: var(--muted);
   font-size: 10px;
+}
+.source-badge .source-attribution {
+  max-width: 430px;
+  margin: 10px 0 0;
+  color: #92a69b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.source-links {
+  display: grid;
+  flex: 0 0 min(190px, 38%);
+  gap: 8px;
+  text-align: right;
 }
 .source-badge a,
 .program-list a,
@@ -869,6 +882,170 @@ main {
   color: #768d81;
   pointer-events: auto;
 }
+.app-footer button {
+  padding: 0;
+  border: 0;
+  color: #8aa397;
+  background: transparent;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.app-footer button:hover,
+.app-footer button:focus-visible {
+  color: var(--green);
+}
+
+.audit-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(2, 8, 6, 0.82);
+  backdrop-filter: blur(10px);
+}
+.audit-dialog {
+  width: min(960px, 100%);
+  max-height: min(860px, calc(100vh - 48px));
+  overflow: auto;
+  padding: 28px;
+  border: 1px solid #29483a;
+  border-radius: 24px;
+  color: #e9f5ef;
+  background: #08130f;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55);
+}
+.audit-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.audit-header h2 {
+  margin: 5px 0 8px;
+  font-size: clamp(24px, 4vw, 36px);
+}
+.audit-header p {
+  max-width: 650px;
+  margin: 0;
+  color: #9db3a8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.audit-close {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: white;
+  background: var(--surface);
+  font-size: 25px;
+  cursor: pointer;
+}
+.audit-close:hover,
+.audit-close:focus-visible {
+  border-color: var(--green);
+  color: var(--green);
+}
+.audit-notice {
+  margin: 22px 0;
+  padding: 14px 16px;
+  border-left: 2px solid var(--green);
+  color: #b5c8be;
+  background: rgba(48, 216, 131, 0.07);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.audit-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.audit-entry {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.audit-entry-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.audit-entry-heading > div > span {
+  color: #70887b;
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.audit-entry h3 {
+  margin: 5px 0 3px;
+  font-size: 15px;
+}
+.audit-entry code {
+  color: #8ea499;
+  font-size: 10px;
+}
+.audit-status {
+  align-self: flex-start;
+  padding: 5px 8px;
+  border: 1px solid rgba(48, 216, 131, 0.3);
+  border-radius: 999px;
+  color: var(--green);
+  background: rgba(48, 216, 131, 0.07);
+  font-size: 9px;
+  white-space: nowrap;
+}
+.audit-entry dl {
+  display: grid;
+  gap: 7px;
+  margin: 16px 0 13px;
+}
+.audit-entry dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+}
+.audit-entry dt {
+  color: #71877c;
+}
+.audit-entry dd {
+  margin: 0;
+  text-align: right;
+}
+.audit-entry a {
+  color: var(--green);
+  text-decoration: none;
+}
+.audit-attribution {
+  margin: 0;
+  padding: 10px;
+  border-radius: 10px;
+  color: #a9beb3;
+  background: #0a1611;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.audit-entry ul {
+  margin: 12px 0 0;
+  padding-left: 16px;
+  color: #8fa399;
+  font-size: 10px;
+  line-height: 1.55;
+}
+.audit-legal-note {
+  margin-top: 18px;
+  color: #667c71;
+  font-size: 9px;
+  line-height: 1.5;
+}
 
 @keyframes spin {
   to {
@@ -1042,6 +1219,32 @@ main {
   }
   .app-footer span {
     display: none;
+  }
+  .source-badge {
+    display: grid;
+  }
+  .source-links {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: left;
+  }
+  .audit-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+  .audit-dialog {
+    max-height: 92vh;
+    padding: 22px 16px 28px;
+    border-radius: 22px 22px 0 0;
+  }
+  .audit-list {
+    grid-template-columns: 1fr;
+  }
+  .audit-entry-heading {
+    display: grid;
+  }
+  .audit-status {
+    justify-self: start;
   }
 }
 

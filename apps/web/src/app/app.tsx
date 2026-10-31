@@ -9,6 +9,7 @@ import { useCountrySelection } from '../features/globe/hooks/use-country-selecti
 import { CoverageLegend } from '../features/coverage/components/coverage-legend';
 import { useCoverage } from '../features/coverage/use-coverage';
 import visaAtlasIcon from '../assets/visa-atlas-icon.svg';
+import { AuditDialog } from '../features/audit/audit-dialog';
 
 function Brand() {
   return (
@@ -31,6 +32,7 @@ export function App() {
   const [listMode, setListMode] = useState(
     () => new URLSearchParams(window.location.search).get('view') === 'list',
   );
+  const [auditOpen, setAuditOpen] = useState(false);
   const handleUnavailable = useCallback(() => setListMode(true), []);
   const coverage = useCoverage(filters);
   const countryNamesByIso3 = useMemo(
@@ -124,7 +126,11 @@ export function App() {
         >
           Feito com Natural Earth ↗
         </a>
+        <button type="button" onClick={() => setAuditOpen(true)}>
+          Auditoria de fontes e licenças
+        </button>
       </footer>
+      <AuditDialog open={auditOpen} onClose={() => setAuditOpen(false)} />
     </div>
   );
 }
