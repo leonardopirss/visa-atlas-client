@@ -16,10 +16,16 @@ function missingValueLabel(status: Statistic['dataStatus']): string {
   return 'Sem dado disponível para este recorte';
 }
 
-export function MetricHeadline({ statistic }: { statistic: Statistic }) {
+export function MetricHeadline({
+  statistic,
+  headingId = 'metric-label',
+}: {
+  statistic: Statistic;
+  headingId?: string;
+}) {
   return (
-    <section className="metric-headline" aria-labelledby="metric-label">
-      <p id="metric-label" className="metric-label">
+    <section className="metric-headline" aria-labelledby={headingId}>
+      <p id={headingId} className="metric-label">
         {METRIC_LABELS[statistic.metricType]}
       </p>
       {statistic.value === null ? (

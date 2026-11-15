@@ -16,6 +16,14 @@ backend de desenvolvimento, defina `VITE_API_PROXY_TARGET`. Em builds
 implantados, `VITE_API_BASE_URL` pode definir a base pública; o valor padrão é
 `/api/v1`.
 
+### Estado navegável
+
+O explorador usa query strings na raiz da SPA: `?country=DEU` abre um país,
+`?compare=DEU,FRA` abre uma comparação e `?view=list` seleciona a lista. Links
+compartilhados não gravam automaticamente a shortlist privada do navegador.
+Como os parâmetros não criam paths virtuais, acesso direto e refresh continuam
+servidos pelo mesmo `index.html`, sem regra adicional de rewrite no host.
+
 ## Qualidade
 
 ```bash
@@ -38,6 +46,24 @@ rotas e valida os cinco endpoints contra o backend de teste, incluindo zero,
 supressão, país mundial sem observação, programa verificado e histórico. A suíte
 `test:e2e:official` é separada porque exige uma release oficial com pelo menos
 dois períodos já publicada no backend local da porta 3000.
+
+## Publicação na Vercel
+
+O workflow `.github/workflows/web.yml` valida formatação, lint, tipos, testes,
+build e E2E antes de publicar a revisão de `main`. A promoção também pode ser
+iniciada manualmente e usa o ambiente protegido `production` do GitHub.
+
+Configure o projeto da Vercel com a raiz do repositório, não `apps/web`. O
+`vercel.json` instala o workspace, gera os contratos e publica `apps/web/dist`.
+Deploys automáticos da integração Git da Vercel ficam desabilitados para evitar
+uma segunda publicação concorrente ao GitHub Actions.
+No ambiente de produção da Vercel, defina `VITE_API_BASE_URL` com a URL HTTPS
+completa da API no Fly.io, incluindo `/api/v1`.
+
+No ambiente `production` do GitHub, configure os secrets `VERCEL_TOKEN`,
+`VERCEL_ORG_ID` e `VERCEL_PROJECT_ID`. A variável opcional `WEB_SMOKE_URL` deve
+apontar para o domínio público do frontend. O domínio exato da Vercel também
+deve estar em `CORS_ORIGINS` nos secrets do app Fly.io.
 
 ## Cartografia, licença e atribuição
 

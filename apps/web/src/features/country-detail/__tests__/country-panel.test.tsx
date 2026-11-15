@@ -46,6 +46,33 @@ describe('CountryPanel', () => {
     );
   });
 
+  it('salva e remove o destino com feedback acessível', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get(detailUrl, () => HttpResponse.json(countryDetailFixture())),
+    );
+    renderApp(<CountryPanel iso3="ESP" />);
+
+    const save = await screen.findByRole('button', { name: 'Salvar destino' });
+    await user.click(save);
+    expect(
+      screen.getByText('Espanha foi salvo na shortlist.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Remover da shortlist' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      screen.getByRole('button', { name: 'Remover da shortlist' }),
+    ).toHaveFocus();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Remover da shortlist' }),
+    );
+    expect(
+      screen.getByText('Espanha foi removido da shortlist.'),
+    ).toBeInTheDocument();
+  });
+
   it('explica dado suprimido e desatualizado sem inventar valor', async () => {
     const suppressed: Statistic = {
       ...availableStatistic,

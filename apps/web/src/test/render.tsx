@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, type RenderOptions } from '@testing-library/react';
 import type { ReactElement, ReactNode } from 'react';
 import { AppStateProvider } from '../app/app-state';
+import { ShortlistProvider } from '../features/shortlist/shortlist-context';
 
 export function createTestQueryClient() {
   return new QueryClient({
@@ -14,7 +15,9 @@ export function renderApp(ui: ReactElement, options?: RenderOptions) {
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AppStateProvider>{children}</AppStateProvider>
+        <ShortlistProvider>
+          <AppStateProvider>{children}</AppStateProvider>
+        </ShortlistProvider>
       </QueryClientProvider>
     );
   }

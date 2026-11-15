@@ -85,3 +85,23 @@ Em 2026-10-25, a descrição de `YearOptional` foi delimitada por aspas para
 corrigir a sintaxe YAML que fazia a vírgula do texto ser interpretada como uma
 propriedade OpenAPI. A correção foi replicada no snapshot backend e não altera
 rotas, parâmetros, schemas, enums, tipos gerados ou semântica do contrato.
+
+## DS-D001 — Shortlist e comparação segura de destinos
+
+**Feature:** `006-destination-shortlist-comparison`
+
+**Data:** 2026-11-15
+
+**Status:** Aprovado sem alteração de contrato
+
+A shortlist e a comparação reutilizam o catálogo e o detalhe de país das cinco
+rotas REST v1. Não será criado endpoint `/compare`, nem campo, enum ou DTO novo.
+
+O frontend consulta cada destino com sua métrica aplicável e deriva a
+compatibilidade exclusivamente de `Statistic.metricType`, `unit`, `period` e
+`comparisonGroupId`. Apenas chaves completas e idênticas podem formar um grupo
+numérico. Chave ausente ou diferente mantém os destinos separados, sem ranking,
+score, soma, vencedor ou probabilidade pessoal.
+
+A shortlist permanece local ao navegador e `compare=` representa apenas estado
+compartilhável da sessão. Nenhum desses estados é persistido pela API.

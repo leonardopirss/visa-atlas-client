@@ -5,6 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles.css';
 import { App } from './app/app';
 import { AppStateProvider } from './app/app-state';
+import { ShortlistProvider } from './features/shortlist/shortlist-context';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,9 +22,11 @@ if (root === null) throw new Error('Elemento raiz não encontrado.');
 createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AppStateProvider>
-        <App />
-      </AppStateProvider>
+      <ShortlistProvider>
+        <AppStateProvider>
+          <App />
+        </AppStateProvider>
+      </ShortlistProvider>
     </QueryClientProvider>
   </StrictMode>,
 );
