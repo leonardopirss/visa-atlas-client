@@ -114,6 +114,24 @@ describe('CountryPanel', () => {
     expect(timeseriesRequest).toHaveBeenCalledTimes(1);
   });
 
+  it('mostra o valor histórico ao passar o mouse por um ano', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get(detailUrl, () => HttpResponse.json(countryDetailFixture())),
+      http.get(timeseriesUrl, () => HttpResponse.json(timeseriesFixture)),
+    );
+    renderApp(<CountryPanel iso3="ESP" />);
+
+    await screen.findByRole('heading', { name: 'Espanha' });
+    await user.click(screen.getByRole('tab', { name: 'Histórico' }));
+    await user.hover(
+      await screen.findByRole('img', { name: '2024: 7 pessoas' }),
+    );
+
+    expect(screen.getByRole('tooltip')).toHaveTextContent('2024');
+    expect(screen.getByRole('tooltip')).toHaveTextContent('7 pessoas');
+  });
+
   it('não deixa uma resposta antiga substituir o país atual', async () => {
     function Harness() {
       const { selectedCountryIso3, selectCountry } = useAppState();

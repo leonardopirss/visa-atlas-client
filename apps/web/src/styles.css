@@ -1009,6 +1009,45 @@ main {
   fill: #d9ffeb;
   stroke: var(--ink);
   stroke-width: 1;
+  transition:
+    r 140ms ease,
+    fill 140ms ease;
+}
+.chart-point-hitbox {
+  fill: transparent;
+  cursor: crosshair;
+}
+.chart-point-target:hover .chart-point,
+.chart-point-target:focus .chart-point {
+  r: 5px;
+  fill: var(--green);
+}
+.chart-point-target:focus {
+  outline: none;
+}
+.chart-point-target:focus .chart-point-hitbox {
+  stroke: rgba(48, 216, 131, 0.55);
+  stroke-width: 1.5;
+}
+.chart-tooltip {
+  pointer-events: none;
+}
+.chart-tooltip rect {
+  fill: #202a2d;
+  stroke: rgba(217, 255, 235, 0.22);
+  stroke-width: 1;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.28));
+}
+.chart-tooltip text {
+  fill: var(--ink);
+  font-size: 8px;
+  text-anchor: middle;
+}
+.chart-tooltip .chart-tooltip-year {
+  fill: var(--green);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 .inline-error,
 .panel-error {
