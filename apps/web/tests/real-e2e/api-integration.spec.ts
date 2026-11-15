@@ -69,3 +69,45 @@ test('abre país do catálogo mundial sem observação como indisponível, não 
   ).toBeVisible();
   await expect(page.getByText('Não foi possível carregar o país')).toBeHidden();
 });
+
+test('salva e compara dois destinos usando respostas reais da API', async ({
+  page,
+}) => {
+  await page.goto('/?view=list');
+  await page.getByRole('button', { name: 'Espanha ESP' }).click();
+  await page.getByRole('button', { name: 'Salvar destino' }).click();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Alemanha DEU' }).click();
+  await page.getByRole('button', { name: 'Salvar destino' }).click();
+  await page.getByLabel('Shortlist com 2 destinos').click();
+  await page.getByRole('button', { name: 'Comparar destinos' }).click();
+
+  await expect(
+    page.getByRole('region', { name: 'Destinos comparáveis entre si' }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Espanha' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Alemanha' })).toBeVisible();
+  await expect(page.locator('.comparison-card .metric-value')).toHaveCount(2);
+});
+
+test('separa Europa, Reino Unido e Canadá usando respostas reais da API', async ({
+  page,
+}) => {
+  await page.goto('/?compare=ESP,GBR,CAN');
+
+  await expect(
+    page.getByRole('heading', { name: 'Contextos diferentes' }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Espanha' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Reino Unido' }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Canadá' })).toBeVisible();
+  await expect(
+    page.getByText('Primeiras autorizações de residência concedidas'),
+  ).toBeVisible();
+  await expect(page.getByText('Vistos de trabalho emitidos')).toBeVisible();
+  await expect(
+    page.getByText('Titulares de permissão de trabalho válida'),
+  ).toBeVisible();
+});

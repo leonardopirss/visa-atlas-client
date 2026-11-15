@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppState } from './app-state';
 import { FilterBar } from '../features/filters/filter-bar';
 import { CountryPanel } from '../features/country-detail/components/country-panel';
@@ -10,6 +10,8 @@ import { CoverageLegend } from '../features/coverage/components/coverage-legend'
 import { useCoverage } from '../features/coverage/use-coverage';
 import visaAtlasIcon from '../assets/visa-atlas-icon.svg';
 import { AuditDialog } from '../features/audit/audit-dialog';
+import { ShortlistLauncher } from '../features/shortlist/components/shortlist-launcher';
+import { ComparisonScreen } from '../features/comparison/comparison-screen';
 
 function Brand() {
   return (
@@ -26,14 +28,19 @@ function Brand() {
 }
 
 export function App() {
-  const { filters } = useAppState();
+  const {
+    filters,
+    view,
+    setView,
+    comparisonIso3s,
+    navigationNotice,
+    reconcileCatalog,
+  } = useAppState();
   const { selectedCountryIso3, selectCountry } = useCountrySelection();
-  const [listMode, setListMode] = useState(
-    () => new URLSearchParams(window.location.search).get('view') === 'list',
-  );
   const [auditOpen, setAuditOpen] = useState(false);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
-  const handleUnavailable = useCallback(() => setListMode(true), []);
+  const listMode = view === 'list';
+  const handleUnavailable = useCallback(() => setView('list'), [setView]);
   const coverage = useCoverage(filters);
   const countryNamesByIso3 = useMemo(
     () =>
@@ -45,6 +52,17 @@ export function App() {
       ),
     [coverage.catalog.data],
   );
+  const catalogIso3s = useMemo(
+    () => new Set((coverage.catalog.data ?? []).map((country) => country.iso3)),
+    [coverage.catalog.data],
+  );
+  const validatedComparisonIso3s = coverage.catalog.data
+    ? comparisonIso3s.filter((iso3) => catalogIso3s.has(iso3))
+    : comparisonIso3s;
+
+  useEffect(() => {
+    if (coverage.catalog.data !== undefined) reconcileCatalog(catalogIso3s);
+  }, [catalogIso3s, coverage.catalog.data, reconcileCatalog]);
 
   return (
     <div className="app-shell">
@@ -54,17 +72,33 @@ export function App() {
           onSelect={selectCountry}
           coverageByIso3={coverage.summary.byIso3}
         />
-        <button
-          type="button"
-          className="view-toggle"
-          onClick={() => setListMode((current) => !current)}
-        >
-          {listMode ? 'Ver globo' : 'Ver lista'}
-        </button>
+        <div className="topbar-actions">
+          <ShortlistLauncher countryNamesByIso3={countryNamesByIso3} />
+          <button
+            type="button"
+            className="view-toggle"
+            onClick={() => setView(listMode ? 'globe' : 'list')}
+          >
+            {listMode ? 'Ver globo' : 'Ver lista'}
+          </button>
+        </div>
       </header>
 
       <main>
-        {listMode ? (
+        {navigationNotice.length > 0 && (
+          <p className="navigation-notice" role="status">
+            {navigationNotice}
+          </p>
+        )}
+        {view === 'compare' ? (
+          coverage.catalog.isPending ? (
+            <p className="comparison-catalog-loading" role="status">
+              Validando destinos da comparação…
+            </p>
+          ) : (
+            <ComparisonScreen iso3s={validatedComparisonIso3s} />
+          )
+        ) : listMode ? (
           <>
             <div className="fallback-filters">
               <FilterBar />
@@ -90,7 +124,7 @@ export function App() {
           />
         )}
 
-        {!listMode && selectedCountryIso3 === null && (
+        {view !== 'compare' && !listMode && selectedCountryIso3 === null && (
           <section
             id="map-filter-panel"
             className={`map-intro${filtersCollapsed ? ' is-collapsed' : ''}`}
@@ -133,17 +167,19 @@ export function App() {
           </section>
         )}
 
-        <div className="map-data-state" aria-live="polite">
-          <CoverageLegend
-            summary={coverage.summary}
-            isPending={
-              coverage.catalog.isPending || coverage.statistics.isPending
-            }
-            hasError={coverage.statistics.hasError}
-          />
-        </div>
+        {view !== 'compare' && (
+          <div className="map-data-state" aria-live="polite">
+            <CoverageLegend
+              summary={coverage.summary}
+              isPending={
+                coverage.catalog.isPending || coverage.statistics.isPending
+              }
+              hasError={coverage.statistics.hasError}
+            />
+          </div>
+        )}
 
-        {selectedCountryIso3 !== null && (
+        {view !== 'compare' && selectedCountryIso3 !== null && (
           <CountryPanel iso3={selectedCountryIso3} />
         )}
       </main>

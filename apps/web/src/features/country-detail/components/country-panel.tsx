@@ -2,6 +2,8 @@ import { useAppState } from '../../../app/app-state';
 import { useCountryDetail } from '../hooks/use-country-detail';
 import { CountryTabs } from './country-tabs';
 import { MobileBottomSheet } from './mobile-bottom-sheet';
+import { useState } from 'react';
+import { useShortlist } from '../../shortlist/shortlist-context';
 
 function iso2ToFlag(iso2: string): string {
   return [...iso2.toUpperCase()]
@@ -12,6 +14,8 @@ function iso2ToFlag(iso2: string): string {
 export function CountryPanel({ iso3 }: { iso3: string }) {
   const { filters, clearSelection } = useAppState();
   const detail = useCountryDetail(iso3, filters);
+  const shortlist = useShortlist();
+  const [shortlistMessage, setShortlistMessage] = useState('');
 
   if (detail.isPending) {
     return (
@@ -62,6 +66,42 @@ export function CountryPanel({ iso3 }: { iso3: string }) {
           <span>{detail.data.country.name}</span>
         </h2>
       </header>
+      <div className="country-shortlist-action">
+        {shortlist.includes(iso3) ? (
+          <button
+            type="button"
+            aria-pressed="true"
+            onClick={() => {
+              shortlist.remove(iso3);
+              setShortlistMessage(
+                `${detail.data.country.name} foi removido da shortlist.`,
+              );
+            }}
+          >
+            Remover da shortlist
+          </button>
+        ) : (
+          <button
+            type="button"
+            aria-pressed="false"
+            onClick={() => {
+              const result = shortlist.add(iso3);
+              setShortlistMessage(
+                result.status === 'added'
+                  ? `${detail.data.country.name} foi salvo na shortlist.`
+                  : result.status === 'limit-reached'
+                    ? 'A shortlist já tem três destinos. Remova um para continuar.'
+                    : 'Este destino já está na shortlist.',
+              );
+            }}
+          >
+            Salvar destino
+          </button>
+        )}
+        <span className="sr-only" role="status" aria-live="polite">
+          {shortlistMessage}
+        </span>
+      </div>
       {detail.data.statistics.value === null && (
         <section className="availability-empty" aria-labelledby="no-data-title">
           <h3 id="no-data-title">País disponível, dado ainda não publicado</h3>
