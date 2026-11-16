@@ -2,23 +2,21 @@ import { useAppState } from '../../app/app-state';
 import { FilterDefaults } from './filter-defaults';
 
 export function FilterBar() {
-  const { filters, replaceFilters } = useAppState();
+  const { filters, coverageMetric, selectCoverageMetric } = useAppState();
   return (
     <section className="filter-bar" aria-label="Filtros da consulta">
       <label className="filter-item filter-select">
         <span>Indicador</span>
         <select
           aria-label="Indicador estatístico"
-          value={filters.metricType}
+          value={coverageMetric}
           onChange={(event) =>
-            replaceFilters({
-              ...filters,
-              metricType: event.target.value as typeof filters.metricType,
-              year: null,
-              comparisonGroupId: null,
-            })
+            selectCoverageMetric(
+              event.target.value as Parameters<typeof selectCoverageMetric>[0],
+            )
           }
         >
+          <option value="ALL">Todos os países</option>
           <option value="FIRST_RESIDENCE_PERMITS_GRANTED">
             Europa · residência
           </option>

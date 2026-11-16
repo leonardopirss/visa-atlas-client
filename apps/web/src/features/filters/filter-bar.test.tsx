@@ -7,11 +7,25 @@ import { FilterBar } from './filter-bar';
 vi.mock('./filter-defaults', () => ({ FilterDefaults: () => null }));
 
 function FilterStateProbe() {
-  const { filters } = useAppState();
-  return <output>{JSON.stringify(filters)}</output>;
+  const { filters, coverageMetric } = useAppState();
+  return <output>{JSON.stringify({ filters, coverageMetric })}</output>;
 }
 
 describe('FilterBar', () => {
+  it('combina todos os indicadores por padrão para exibir todos os países', () => {
+    render(
+      <AppStateProvider>
+        <FilterBar />
+        <FilterStateProbe />
+      </AppStateProvider>,
+    );
+
+    expect(
+      screen.getByRole('combobox', { name: 'Indicador estatístico' }),
+    ).toHaveValue('ALL');
+    expect(screen.getByText(/"coverageMetric":"ALL"/)).toBeInTheDocument();
+  });
+
   it('allows selecting Canada and clears dimensions from the previous source', async () => {
     const user = userEvent.setup();
     render(
@@ -32,5 +46,8 @@ describe('FilterBar', () => {
     expect(
       screen.getByText(/"metricType":"VALID_PERMIT_HOLDERS"/),
     ).toHaveTextContent('"comparisonGroupId":null');
+    expect(
+      screen.getByText(/"metricType":"VALID_PERMIT_HOLDERS"/),
+    ).toHaveTextContent('"coverageMetric":"VALID_PERMIT_HOLDERS"');
   });
 });
