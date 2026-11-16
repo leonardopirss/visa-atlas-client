@@ -9,11 +9,20 @@ import type { FilterState } from '../../services/api/types';
 import type { CoverageMetric } from '../../app/app-state';
 import { deriveCoverage } from './coverage';
 
-const COVERAGE_METRICS: readonly MetricType[] = [
-  'FIRST_RESIDENCE_PERMITS_GRANTED',
-  'WORK_VISAS_ISSUED',
-  'VALID_PERMIT_HOLDERS',
-];
+const COVERAGE_METRICS: Readonly<
+  Record<FilterState['purpose'], readonly MetricType[]>
+> = {
+  WORK: [
+    'FIRST_RESIDENCE_PERMITS_GRANTED',
+    'WORK_VISAS_ISSUED',
+    'VALID_PERMIT_HOLDERS',
+  ],
+  STUDY: [
+    'FIRST_RESIDENCE_PERMITS_GRANTED',
+    'APPLICATIONS_RECEIVED',
+    'VALID_PERMIT_HOLDERS',
+  ],
+};
 
 export function useCoverage(
   filters: FilterState,
@@ -21,7 +30,9 @@ export function useCoverage(
 ) {
   const catalog = useQuery(allCountriesQueryOptions());
   const metrics =
-    coverageMetric === 'ALL' ? COVERAGE_METRICS : [coverageMetric];
+    coverageMetric === 'ALL'
+      ? COVERAGE_METRICS[filters.purpose]
+      : [coverageMetric];
   const statisticQueries = useQueries({
     queries: metrics.map((metricType) =>
       mapStatisticsQueryOptions({
