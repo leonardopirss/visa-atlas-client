@@ -185,9 +185,6 @@ export function App() {
       </main>
 
       <footer className="app-footer">
-        <span>
-          Dados estatísticos fornecidos exclusivamente pela API Visa Atlas.
-        </span>
         <a
           href="https://www.naturalearthdata.com/"
           target="_blank"
