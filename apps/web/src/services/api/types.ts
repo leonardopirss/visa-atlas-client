@@ -1,12 +1,17 @@
-import type { MetricType } from '@visa-atlas/contracts';
+import type { MetricType, VisaPurpose } from '@visa-atlas/contracts';
 
 export type FilterState = {
   citizenship: string;
-  purpose: 'WORK';
+  purpose: VisaPurpose;
   year: number | null;
   metricType: MetricType;
   comparisonGroupId: string | null;
 };
+
+export type DefaultFiltersQuery = Pick<
+  FilterState,
+  'citizenship' | 'purpose' | 'metricType'
+>;
 
 export type CountryQuery = FilterState & { iso3: string };
 

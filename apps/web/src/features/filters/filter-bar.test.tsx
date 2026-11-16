@@ -50,4 +50,26 @@ describe('FilterBar', () => {
       screen.getByText(/"metricType":"VALID_PERMIT_HOLDERS"/),
     ).toHaveTextContent('"coverageMetric":"VALID_PERMIT_HOLDERS"');
   });
+
+  it('allows selecting study and clears dependent dimensions', async () => {
+    const user = userEvent.setup();
+    render(
+      <AppStateProvider>
+        <FilterBar />
+        <FilterStateProbe />
+      </AppStateProvider>,
+    );
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Finalidade' }),
+      'STUDY',
+    );
+
+    expect(screen.getByText(/"purpose":"STUDY"/)).toHaveTextContent(
+      '"year":null',
+    );
+    expect(screen.getByText(/"purpose":"STUDY"/)).toHaveTextContent(
+      '"comparisonGroupId":null',
+    );
+  });
 });

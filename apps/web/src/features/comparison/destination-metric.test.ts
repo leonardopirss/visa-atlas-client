@@ -7,15 +7,21 @@ describe('metricForDestination', () => {
     expect(metricForDestination('GBR')).toBe('WORK_VISAS_ISSUED');
   });
 
+  it('usa solicitações de estudo no Reino Unido sem chamar pedidos de concessões', () => {
+    expect(
+      metricForDestination('GBR', 'FIRST_RESIDENCE_PERMITS_GRANTED', 'STUDY'),
+    ).toBe('APPLICATIONS_RECEIVED');
+  });
+
   it('restaura a métrica europeia ao sair de um destino específico', () => {
     expect(metricForDestination('DEU', 'VALID_PERMIT_HOLDERS')).toBe(
       'FIRST_RESIDENCE_PERMITS_GRANTED',
     );
   });
 
-  it('preserva outras métricas explicitamente selecionadas', () => {
+  it('restaura a métrica europeia ao sair de solicitações do Reino Unido', () => {
     expect(metricForDestination('DEU', 'APPLICATIONS_RECEIVED')).toBe(
-      'APPLICATIONS_RECEIVED',
+      'FIRST_RESIDENCE_PERMITS_GRANTED',
     );
   });
 });

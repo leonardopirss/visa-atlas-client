@@ -6,7 +6,7 @@ repository contains the React client, shared OpenAPI-generated types, local
 geographic data, and the specifications that define the public API.
 
 The MVP is public and does not require authentication. Its initial data scope is
-Brazilian citizenship (`BRA`) and work-related travel (`WORK`). Visa Atlas is an
+Brazilian citizenship (`BRA`) with work (`WORK`) and study (`STUDY`) purposes. Visa Atlas is an
 information and exploration tool; it does not assess personal eligibility or
 submit visa applications.
 

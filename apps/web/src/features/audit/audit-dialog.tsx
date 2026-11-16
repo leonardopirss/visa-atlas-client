@@ -52,7 +52,7 @@ export function AuditDialog({
             <h2 id="audit-title">Auditoria de fontes e licenças</h2>
             <p id="audit-summary">
               {DATA_SOURCE_AUDIT.length} fontes verificadas em{' '}
-              <time dateTime={DATA_SOURCE_AUDIT_VERIFIED_AT}>31/10/2026</time>.
+              <time dateTime={DATA_SOURCE_AUDIT_VERIFIED_AT}>16/11/2026</time>.
               Todas permitem uso comercial nas condições descritas abaixo.
             </p>
           </div>
