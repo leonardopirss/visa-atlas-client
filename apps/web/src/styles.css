@@ -1070,12 +1070,13 @@ main {
 }
 .chart-tooltip text {
   fill: #fff;
-  font-size: 8px;
+  font-size: 10px;
+  font-weight: 600;
   text-anchor: middle;
 }
 .chart-tooltip .chart-tooltip-year {
   fill: var(--green);
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.08em;
 }
