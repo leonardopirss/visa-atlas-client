@@ -30,13 +30,13 @@ test('recolhe e reabre os filtros do mapa', async ({ page }) => {
 test('expõe legenda, badges e filtro de países com dados', async ({ page }) => {
   await page.goto('/?view=list');
 
-  await expect(page.getByText('Com dados (2)')).toBeVisible();
-  await expect(page.getByText('Sem dados (2)')).toBeVisible();
+  await expect(page.getByText('Com dados (3)')).toBeVisible();
+  await expect(page.getByText('Sem dados (1)')).toBeVisible();
   await expect(page.getByRole('button', { name: /França FRA/ })).toContainText(
     'Ainda sem dados',
   );
   await expect(page.getByRole('button', { name: /Canadá CAN/ })).toContainText(
-    'Ainda sem dados',
+    'Dados disponíveis',
   );
 
   await page
@@ -45,7 +45,7 @@ test('expõe legenda, badges e filtro de países com dados', async ({ page }) =>
     .check();
   await expect(page.getByRole('button', { name: /Espanha ESP/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /França FRA/ })).toBeHidden();
-  await expect(page.getByRole('button', { name: /Canadá CAN/ })).toBeHidden();
+  await expect(page.getByRole('button', { name: /Canadá CAN/ })).toBeVisible();
 });
 
 test('atualiza a cobertura ao alternar entre Europa e Canadá', async ({
@@ -55,8 +55,15 @@ test('atualiza a cobertura ao alternar entre Europa e Canadá', async ({
 
   const spain = page.getByRole('button', { name: /Espanha ESP/ });
   const canada = page.getByRole('button', { name: /Canadá CAN/ });
+  const metric = page.getByRole('combobox', {
+    name: 'Indicador estatístico',
+  });
+
+  await metric.selectOption('FIRST_RESIDENCE_PERMITS_GRANTED');
   await expect(spain).toContainText('Dados disponíveis');
   await expect(canada).toContainText('Ainda sem dados');
+  await expect(page.getByText('Com dados (2)')).toBeVisible();
+  await expect(page.getByText('Sem dados (2)')).toBeVisible();
 
   await spain.click();
   await expect(
@@ -65,6 +72,10 @@ test('atualiza a cobertura ao alternar entre Europa e Canadá', async ({
   await page
     .getByRole('button', { name: 'Fechar detalhes e retornar ao globo' })
     .click();
+
+  await metric.selectOption('VALID_PERMIT_HOLDERS');
+  await expect(spain).toContainText('Ainda sem dados');
+  await expect(canada).toContainText('Dados disponíveis');
   await canada.click();
   await expect(
     page.getByRole('dialog', { name: 'Detalhes de Canadá' }),
@@ -73,8 +84,6 @@ test('atualiza a cobertura ao alternar entre Europa e Canadá', async ({
     .getByRole('button', { name: 'Fechar detalhes e retornar ao globo' })
     .click();
 
-  await expect(spain).toContainText('Ainda sem dados');
-  await expect(canada).toContainText('Dados disponíveis');
   await expect(page.getByText('Com dados (1)')).toBeVisible();
   await expect(page.getByText('Sem dados (3)')).toBeVisible();
 });

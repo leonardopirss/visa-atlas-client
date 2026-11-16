@@ -108,23 +108,23 @@ export function StatisticsTimeseriesChart({
         {activePoint !== undefined && (
           <g
             className="chart-tooltip"
-            transform={`translate(${Math.min(Math.max(activePoint.x, 58), 302)} ${activePoint.y})`}
+            transform={`translate(${Math.min(Math.max(activePoint.x, 70), 290)} ${activePoint.y})`}
             role="tooltip"
           >
             <rect
-              x="-54"
-              y={activePoint.y >= 58 ? -52 : 12}
-              width="108"
-              height="40"
-              rx="7"
+              x="-66"
+              y={activePoint.y >= 66 ? -62 : 12}
+              width="132"
+              height="50"
+              rx="8"
             />
             <text
-              y={activePoint.y >= 58 ? -36 : 28}
+              y={activePoint.y >= 66 ? -42 : 31}
               className="chart-tooltip-year"
             >
               {activePoint.year}
             </text>
-            <text y={activePoint.y >= 58 ? -21 : 43}>
+            <text y={activePoint.y >= 66 ? -24 : 49}>
               {numberFormatter.format(activePoint.value)} {unit}
             </text>
           </g>
