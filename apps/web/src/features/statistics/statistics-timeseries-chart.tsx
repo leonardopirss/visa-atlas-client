@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { timeseriesQueryOptions } from '../../services/api/queries';
 import type { TimeseriesQuery } from '../../services/api/types';
@@ -22,6 +23,7 @@ function scaledChartPoints(values: Array<{ year: number; value: number }>) {
 export function StatisticsTimeseriesChart({
   query,
 }: StatisticsTimeseriesChartProps) {
+  const [activeYear, setActiveYear] = useState<number | null>(null);
   const timeseries = useQuery(timeseriesQueryOptions(query));
 
   if (timeseries.isPending)
@@ -52,6 +54,9 @@ export function StatisticsTimeseriesChart({
   const first = available[0];
   const last = available.at(-1);
   const plotted = scaledChartPoints(available);
+  const activePoint = plotted.find((point) => point.year === activeYear);
+  const unit = timeseries.data.points[0]?.statistic.unit ?? '';
+  const numberFormatter = new Intl.NumberFormat('pt-BR');
 
   return (
     <section className="timeseries" aria-labelledby="timeseries-title">
@@ -62,7 +67,7 @@ export function StatisticsTimeseriesChart({
             {first?.year}–{last?.year}
           </h3>
         </div>
-        <span>{timeseries.data.points[0]?.statistic.unit}</span>
+        <span>{unit}</span>
       </div>
       <svg
         viewBox="0 0 360 170"
@@ -74,15 +79,56 @@ export function StatisticsTimeseriesChart({
           points={plotted.map((point) => `${point.x},${point.y}`).join(' ')}
           className="chart-line"
         />
-        {plotted.map((point) => (
-          <circle
-            key={point.year}
-            cx={point.x}
-            cy={point.y}
-            r="3"
-            className="chart-point"
-          />
-        ))}
+        {plotted.map((point) => {
+          const label =
+            `${point.year}: ${numberFormatter.format(point.value)} ${unit}`.trim();
+
+          return (
+            <g
+              key={point.year}
+              className="chart-point-target"
+              role="img"
+              tabIndex={0}
+              aria-label={label}
+              onMouseEnter={() => setActiveYear(point.year)}
+              onMouseLeave={() => setActiveYear(null)}
+              onFocus={() => setActiveYear(point.year)}
+              onBlur={() => setActiveYear(null)}
+            >
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r="10"
+                className="chart-point-hitbox"
+              />
+              <circle cx={point.x} cy={point.y} r="3" className="chart-point" />
+            </g>
+          );
+        })}
+        {activePoint !== undefined && (
+          <g
+            className="chart-tooltip"
+            transform={`translate(${Math.min(Math.max(activePoint.x, 58), 302)} ${activePoint.y})`}
+            role="tooltip"
+          >
+            <rect
+              x="-54"
+              y={activePoint.y >= 58 ? -52 : 12}
+              width="108"
+              height="40"
+              rx="7"
+            />
+            <text
+              y={activePoint.y >= 58 ? -36 : 28}
+              className="chart-tooltip-year"
+            >
+              {activePoint.year}
+            </text>
+            <text y={activePoint.y >= 58 ? -21 : 43}>
+              {numberFormatter.format(activePoint.value)} {unit}
+            </text>
+          </g>
+        )}
       </svg>
       <table className="sr-only">
         <caption>Valores da série histórica</caption>
