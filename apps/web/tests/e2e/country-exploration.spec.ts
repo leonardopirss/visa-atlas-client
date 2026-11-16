@@ -7,7 +7,8 @@ test.beforeEach(async ({ page }) => {
 
 test('filtra a cobertura pelo indicador selecionado', async ({ page }) => {
   await page.goto('/?view=list');
-  await expect(page.getByText('Com dados (2)')).toBeVisible();
+  await expect(page.getByText('Com dados (3)')).toBeVisible();
+  await expect(page.getByText('Sem dados (1)')).toBeVisible();
 
   await page
     .getByRole('combobox', { name: 'Indicador estatístico' })
