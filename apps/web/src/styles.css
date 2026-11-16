@@ -1075,7 +1075,7 @@ main {
   text-anchor: middle;
 }
 .chart-tooltip .chart-tooltip-year {
-  fill: var(--green);
+  fill: #fff;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.08em;

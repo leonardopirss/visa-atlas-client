@@ -1,4 +1,4 @@
-import type { MetricType } from '@visa-atlas/contracts';
+import type { MetricType, VisaPurpose } from '@visa-atlas/contracts';
 
 export const INITIAL_METRIC: MetricType = 'FIRST_RESIDENCE_PERMITS_GRANTED';
 
@@ -10,10 +10,17 @@ const DESTINATION_METRICS: Readonly<Partial<Record<string, MetricType>>> = {
 export function metricForDestination(
   iso3: string,
   current: MetricType = INITIAL_METRIC,
+  purpose: VisaPurpose = 'WORK',
 ): MetricType {
-  const destinationMetric = DESTINATION_METRICS[iso3.toUpperCase()];
+  const normalizedIso3 = iso3.toUpperCase();
+  if (normalizedIso3 === 'GBR' && purpose === 'STUDY') {
+    return 'APPLICATIONS_RECEIVED';
+  }
+  const destinationMetric = DESTINATION_METRICS[normalizedIso3];
   if (destinationMetric !== undefined) return destinationMetric;
-  return current === 'VALID_PERMIT_HOLDERS' || current === 'WORK_VISAS_ISSUED'
+  return current === 'VALID_PERMIT_HOLDERS' ||
+    current === 'WORK_VISAS_ISSUED' ||
+    current === 'APPLICATIONS_RECEIVED'
     ? INITIAL_METRIC
     : current;
 }

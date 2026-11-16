@@ -15,9 +15,28 @@ export interface DataSourceAuditEntry {
   conditions: readonly string[];
 }
 
-export const DATA_SOURCE_AUDIT_VERIFIED_AT = '2026-10-31';
+export const DATA_SOURCE_AUDIT_VERIFIED_AT = '2026-11-16';
 
 export const DATA_SOURCE_AUDIT: readonly DataSourceAuditEntry[] = [
+  {
+    id: 'eurostat-migr-resedu',
+    category: 'Estatística oficial',
+    organization: 'Eurostat',
+    datasetCode: 'migr_resedu',
+    sourceUrl:
+      'https://ec.europa.eu/eurostat/databrowser/view/migr_resedu/default/table',
+    licenseName: 'Política de reutilização da Comissão Europeia',
+    licenseUrl: 'https://ec.europa.eu/eurostat/help/copyright-notice',
+    commercialUse: true,
+    status: 'COMPLIANT_WITH_CONDITIONS',
+    verifiedAt: DATA_SOURCE_AUDIT_VERIFIED_AT,
+    attribution:
+      'Fonte: Eurostat, migr_resedu. Dados filtrados e normalizados pelo Visa Atlas; o Eurostat não se responsabiliza por esta adaptação.',
+    conditions: [
+      'Manter a categoria EDUC, a unidade e o período associados à observação.',
+      'Não apresentar autorizações de residência como vistos consulares ou probabilidade individual de aprovação.',
+    ],
+  },
   {
     id: 'eurostat-migr-resfirst',
     category: 'Estatística oficial',
@@ -39,6 +58,26 @@ export const DATA_SOURCE_AUDIT: readonly DataSourceAuditEntry[] = [
     ],
   },
   {
+    id: 'uk-home-office-edu-d01',
+    category: 'Estatística oficial',
+    organization: 'UK Home Office',
+    datasetCode: 'Edu_D01',
+    sourceUrl:
+      'https://www.gov.uk/government/statistical-data-sets/immigration-system-statistics-data-tables',
+    licenseName: 'Open Government Licence v3.0',
+    licenseUrl:
+      'https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/',
+    commercialUse: true,
+    status: 'COMPLIANT_WITH_CONDITIONS',
+    verifiedAt: DATA_SOURCE_AUDIT_VERIFIED_AT,
+    attribution:
+      'Contains public sector information licensed under the Open Government Licence v3.0.',
+    conditions: [
+      'Rotular o evento como solicitações recebidas, nunca como vistos concedidos.',
+      'Não sugerir afiliação, aprovação ou endosso pelo UK Home Office.',
+    ],
+  },
+  {
     id: 'uk-home-office-occ-d02',
     category: 'Estatística oficial',
     organization: 'UK Home Office',
@@ -56,6 +95,26 @@ export const DATA_SOURCE_AUDIT: readonly DataSourceAuditEntry[] = [
     conditions: [
       'Manter a atribuição OGL associada aos dados publicados.',
       'Não sugerir afiliação, aprovação ou endosso pelo UK Home Office.',
+    ],
+  },
+  {
+    id: 'ircc-study-year-end',
+    category: 'Estatística oficial',
+    organization: 'Immigration, Refugees and Citizenship Canada (IRCC)',
+    datasetCode: 'STUDY_CITZ_YEAR_END',
+    sourceUrl:
+      'https://open.canada.ca/data/en/dataset/90115b00-f9b8-49e8-afa3-b4cff8facaee',
+    licenseName: 'Open Government Licence — Canada 2.0',
+    licenseUrl: 'https://open.canada.ca/en/open-government-licence-canada',
+    commercialUse: true,
+    status: 'COMPLIANT_WITH_CONDITIONS',
+    verifiedAt: DATA_SOURCE_AUDIT_VERIFIED_AT,
+    attribution:
+      'Contains information licensed under the Open Government Licence – Canada.',
+    conditions: [
+      'Informar que o valor é um estoque de titulares em 31 de dezembro.',
+      'Preservar arredondamento e supressão publicados pelo IRCC.',
+      'Não usar símbolos oficiais nem sugerir endosso pelo Governo do Canadá.',
     ],
   },
   {

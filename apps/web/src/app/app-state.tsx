@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { MetricType } from '@visa-atlas/contracts';
+import type { MetricType, VisaPurpose } from '@visa-atlas/contracts';
 import type { FilterState } from '../services/api/types';
 import {
   INITIAL_METRIC,
@@ -44,6 +44,7 @@ type AppStateValue = {
   closeComparison: () => void;
   reconcileCatalog: (validIso3s: ReadonlySet<string>) => void;
   selectCoverageMetric: (metric: CoverageMetric) => void;
+  selectPurpose: (purpose: VisaPurpose) => void;
   replaceFilters: (filters: FilterState) => void;
 };
 
@@ -84,7 +85,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         'push',
       );
       setFilters((current) => {
-        const metricType = metricForDestination(iso3, current.metricType);
+        const metricType = metricForDestination(
+          iso3,
+          current.metricType,
+          current.purpose,
+        );
         if (metricType === current.metricType) return current;
         return { ...current, metricType, year: null, comparisonGroupId: null };
       });
@@ -186,6 +191,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       comparisonGroupId: null,
     }));
   }, []);
+  const selectPurpose = useCallback(
+    (purpose: VisaPurpose) => {
+      setCoverageMetric('ALL');
+      setFilters((current) => ({
+        ...current,
+        purpose,
+        metricType:
+          selectedCountryIso3 === null
+            ? INITIAL_METRIC
+            : metricForDestination(
+                selectedCountryIso3,
+                INITIAL_METRIC,
+                purpose,
+              ),
+        year: null,
+        comparisonGroupId: null,
+      }));
+    },
+    [selectedCountryIso3],
+  );
 
   useEffect(() => {
     const handlePopState = () => {
@@ -200,6 +225,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           metricType: metricForDestination(
             navigation.countryIso3 ?? '',
             current.metricType,
+            current.purpose,
           ),
           year: null,
           comparisonGroupId: null,
@@ -225,6 +251,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       closeComparison,
       reconcileCatalog,
       selectCoverageMetric,
+      selectPurpose,
       replaceFilters,
     }),
     [
@@ -238,6 +265,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       reconcileCatalog,
       replaceFilters,
       selectCoverageMetric,
+      selectPurpose,
       selectCountry,
       selectedCountryIso3,
       setView,

@@ -10,12 +10,14 @@ import {
 import type {
   CountriesQuery,
   CountryQuery,
+  DefaultFiltersQuery,
   FilterState,
   TimeseriesQuery,
 } from './types';
 
 export const apiQueryKeys = {
-  defaults: ['filters', 'defaults'] as const,
+  defaults: (filters: DefaultFiltersQuery) =>
+    ['filters', 'defaults', filters] as const,
   allCountries: ['countries', 'all'] as const,
   countries: (query: CountriesQuery) => ['countries', query] as const,
   map: (filters: FilterState) => ['stats', 'map', filters] as const,
@@ -24,10 +26,10 @@ export const apiQueryKeys = {
     ['countries', 'timeseries', query] as const,
 };
 
-export const defaultsQueryOptions = () =>
+export const defaultsQueryOptions = (filters: DefaultFiltersQuery) =>
   queryOptions({
-    queryKey: apiQueryKeys.defaults,
-    queryFn: ({ signal }) => getFilterDefaults(signal),
+    queryKey: apiQueryKeys.defaults(filters),
+    queryFn: ({ signal }) => getFilterDefaults(filters, signal),
     staleTime: 5 * 60_000,
   });
 

@@ -86,7 +86,10 @@ export function CountryTabs({
       >
         {activeTab === 'statistics' && (
           <div className="statistics-content">
-            <MetricHeadline statistic={detail.statistics} />
+            <MetricHeadline
+              statistic={detail.statistics}
+              purpose={filters.purpose}
+            />
             {detail.classifications.length > 0 && (
               <section
                 className="classification-list"
@@ -112,7 +115,10 @@ export function CountryTabs({
         {activeTab === 'programs' && (
           <div className="program-content">
             <header className="program-intro">
-              <span className="eyebrow">Modalidades de trabalho</span>
+              <span className="eyebrow">
+                Modalidades de{' '}
+                {filters.purpose === 'STUDY' ? 'estudo' : 'trabalho'}
+              </span>
               <h3>Opções verificadas para {detail.country.name}</h3>
               <p>
                 Esta área reúne somente modalidades publicadas com referência
@@ -132,7 +138,9 @@ export function CountryTabs({
                   const officialUrl = safeExternalUrl(program.officialUrl);
                   return (
                     <article key={program.id}>
-                      <span className="program-purpose">Trabalho</span>
+                      <span className="program-purpose">
+                        {program.purpose === 'STUDY' ? 'Estudo' : 'Trabalho'}
+                      </span>
                       <h3>{program.title}</h3>
                       {program.summary !== null &&
                         program.summary !== undefined && (

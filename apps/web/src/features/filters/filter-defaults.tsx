@@ -1,18 +1,26 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { INITIAL_FILTERS, useAppState } from '../../app/app-state';
+import { useAppState } from '../../app/app-state';
 import { defaultsQueryOptions } from '../../services/api/queries';
 
 export function FilterDefaults() {
   const { filters, replaceFilters } = useAppState();
-  const defaults = useQuery(defaultsQueryOptions());
+  const defaults = useQuery(
+    defaultsQueryOptions({
+      citizenship: filters.citizenship,
+      purpose: filters.purpose,
+      metricType: filters.metricType,
+    }),
+  );
 
   useEffect(() => {
     if (defaults.data === undefined) return;
     if (
-      filters.metricType !== INITIAL_FILTERS.metricType ||
-      filters.year !== INITIAL_FILTERS.year ||
-      filters.comparisonGroupId !== INITIAL_FILTERS.comparisonGroupId
+      filters.citizenship === defaults.data.citizenship &&
+      filters.purpose === defaults.data.purpose &&
+      filters.year === defaults.data.year &&
+      filters.metricType === defaults.data.metricType &&
+      filters.comparisonGroupId === defaults.data.comparisonGroupId
     ) {
       return;
     }
@@ -30,7 +38,7 @@ export function FilterDefaults() {
   if (defaults.isError) {
     return (
       <span className="filter-warning" role="alert">
-        API indisponível — usando BRA / Trabalho
+        API indisponível — mantendo os filtros atuais
       </span>
     );
   }

@@ -11,18 +11,21 @@ describe('AuditDialog', () => {
     expect(
       screen.getByRole('heading', { name: 'Auditoria de fontes e licenças' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/6 fontes verificadas/)).toBeInTheDocument();
+    expect(screen.getByText(/9 fontes verificadas/)).toBeInTheDocument();
     expect(screen.getByText(/produto independente/)).toBeInTheDocument();
     expect(
-      screen.getByText(
+      screen.getAllByText(
         'Contains public sector information licensed under the Open Government Licence v3.0.',
       ),
-    ).toBeInTheDocument();
+    ).toHaveLength(2);
     expect(
-      screen.getByText(
+      screen.getAllByText(
         'Contains information licensed under the Open Government Licence – Canada.',
       ),
-    ).toBeInTheDocument();
+    ).toHaveLength(2);
+    expect(screen.getByText('migr_resedu')).toBeInTheDocument();
+    expect(screen.getByText('Edu_D01')).toBeInTheDocument();
+    expect(screen.getByText('STUDY_CITZ_YEAR_END')).toBeInTheDocument();
     expect(
       screen.getByText(/Contém informações de mledoze\/countries/),
     ).toBeInTheDocument();

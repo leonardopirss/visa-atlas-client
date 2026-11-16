@@ -9,6 +9,7 @@ import type {
 import type {
   CountriesQuery,
   CountryQuery,
+  DefaultFiltersQuery,
   FilterState,
   TimeseriesQuery,
 } from './types';
@@ -75,9 +76,17 @@ async function request(path: string, signal?: AbortSignal): Promise<unknown> {
 }
 
 export async function getFilterDefaults(
+  filters: DefaultFiltersQuery,
   signal?: AbortSignal,
 ): Promise<FilterDefaults> {
-  return parseFilterDefaults(await request('/filters/defaults', signal));
+  const params = new URLSearchParams({
+    citizenship: filters.citizenship,
+    purpose: filters.purpose,
+    metricType: filters.metricType,
+  });
+  return parseFilterDefaults(
+    await request(`/filters/defaults?${params.toString()}`, signal),
+  );
 }
 
 export async function listCountries(

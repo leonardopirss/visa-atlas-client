@@ -17,3 +17,4 @@ export type SourceRef = components["schemas"]["SourceRef"];
 export type Statistic = components["schemas"]["Statistic"];
 export type TimeseriesResponse = components["schemas"]["TimeseriesResponse"];
 export type VisaProgram = components["schemas"]["VisaProgram"];
+export type VisaPurpose = FilterDefaults["purpose"];

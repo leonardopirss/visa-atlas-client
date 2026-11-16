@@ -123,7 +123,7 @@ export interface components {
         FilterDefaults: {
             citizenship: components["schemas"]["Iso3"];
             /** @enum {string} */
-            purpose: "WORK";
+            purpose: "WORK" | "STUDY";
             year: number | null;
             metricType: components["schemas"]["MetricType"];
             comparisonGroupId: string | null;
@@ -154,7 +154,7 @@ export interface components {
         MapStatisticsResponse: {
             citizenship: components["schemas"]["Iso3"];
             /** @enum {string} */
-            purpose: "WORK";
+            purpose: "WORK" | "STUDY";
             year: number | null;
             countries: components["schemas"]["MapCountry"][];
             legendLabel?: string;
@@ -163,7 +163,7 @@ export interface components {
             id: string;
             title: string;
             /** @enum {string} */
-            purpose: "WORK";
+            purpose: "WORK" | "STUDY";
             /** @enum {string} */
             sponsorshipRequirement: "REQUIRED" | "NOT_REQUIRED" | "DEPENDS" | "UNKNOWN";
             /** Format: uri */
@@ -192,7 +192,7 @@ export interface components {
             iso3: components["schemas"]["Iso3"];
             citizenship: components["schemas"]["Iso3"];
             /** @enum {string} */
-            purpose: "WORK";
+            purpose: "WORK" | "STUDY";
             metricType: components["schemas"]["MetricType"];
             comparisonGroupId: string | null;
             points: components["schemas"]["Timepoint"][];
@@ -244,8 +244,8 @@ export interface components {
     parameters: {
         Iso3: components["schemas"]["Iso3"];
         Citizenship: components["schemas"]["Iso3"];
-        Purpose: "WORK";
-        /** @description Na ausência */
+        Purpose: "WORK" | "STUDY";
+        /** @description Na ausência, selecionar último ano comum validado */
         YearOptional: number;
         MetricType: components["schemas"]["MetricType"];
         ComparisonGroupId: string;
@@ -258,7 +258,11 @@ export type $defs = Record<string, never>;
 export interface operations {
     getFilterDefaults: {
         parameters: {
-            query?: never;
+            query?: {
+                citizenship?: components["parameters"]["Citizenship"];
+                purpose?: components["parameters"]["Purpose"];
+                metricType?: components["parameters"]["MetricType"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -300,6 +304,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            503: components["responses"]["Unavailable"];
         };
     };
     getMapStatistics: {
@@ -307,7 +312,7 @@ export interface operations {
             query?: {
                 citizenship?: components["parameters"]["Citizenship"];
                 purpose?: components["parameters"]["Purpose"];
-                /** @description Na ausência */
+                /** @description Na ausência, selecionar último ano comum validado */
                 year?: components["parameters"]["YearOptional"];
                 metricType?: components["parameters"]["MetricType"];
                 comparisonGroupId?: components["parameters"]["ComparisonGroupId"];
@@ -329,6 +334,7 @@ export interface operations {
             };
             400: components["responses"]["BadRequest"];
             422: components["responses"]["Unprocessable"];
+            503: components["responses"]["Unavailable"];
         };
     };
     getCountryDetail: {
@@ -336,7 +342,7 @@ export interface operations {
             query?: {
                 citizenship?: components["parameters"]["Citizenship"];
                 purpose?: components["parameters"]["Purpose"];
-                /** @description Na ausência */
+                /** @description Na ausência, selecionar último ano comum validado */
                 year?: components["parameters"]["YearOptional"];
                 metricType?: components["parameters"]["MetricType"];
                 comparisonGroupId?: components["parameters"]["ComparisonGroupId"];
@@ -358,8 +364,10 @@ export interface operations {
                     "application/json": components["schemas"]["CountryDetail"];
                 };
             };
+            400: components["responses"]["BadRequest"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            503: components["responses"]["Unavailable"];
         };
     };
     getCountryTimeseries: {
@@ -389,8 +397,10 @@ export interface operations {
                     "application/json": components["schemas"]["TimeseriesResponse"];
                 };
             };
+            400: components["responses"]["BadRequest"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            503: components["responses"]["Unavailable"];
         };
     };
 }

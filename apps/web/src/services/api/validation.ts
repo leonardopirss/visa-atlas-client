@@ -21,6 +21,10 @@ function hasArray(value: JsonObject, key: string): boolean {
   return Array.isArray(value[key]);
 }
 
+function hasPurpose(value: JsonObject): boolean {
+  return value.purpose === 'WORK' || value.purpose === 'STUDY';
+}
+
 function invalidPayload(endpoint: string): never {
   throw new Error(`A API retornou um payload inválido para ${endpoint}.`);
 }
@@ -41,7 +45,7 @@ export function parseFilterDefaults(value: unknown): FilterDefaults {
   if (
     !isObject(value) ||
     !hasString(value, 'citizenship') ||
-    value.purpose !== 'WORK' ||
+    !hasPurpose(value) ||
     !hasString(value, 'metricType') ||
     !('year' in value) ||
     !('comparisonGroupId' in value)
@@ -68,7 +72,7 @@ export function parseMapStatistics(value: unknown): MapStatisticsResponse {
   if (
     !isObject(value) ||
     !hasString(value, 'citizenship') ||
-    value.purpose !== 'WORK' ||
+    !hasPurpose(value) ||
     !hasArray(value, 'countries') ||
     !('year' in value)
   ) {
@@ -97,7 +101,7 @@ export function parseTimeseries(value: unknown): TimeseriesResponse {
     !isObject(value) ||
     !hasString(value, 'iso3') ||
     !hasString(value, 'citizenship') ||
-    value.purpose !== 'WORK' ||
+    !hasPurpose(value) ||
     !hasString(value, 'metricType') ||
     !hasArray(value, 'points')
   ) {

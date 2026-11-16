@@ -52,6 +52,67 @@ test('integra os cinco endpoints reais e preserva zero e supressão', async ({
     ]);
 });
 
+test('troca para estudo e exibe a série oficial europeia isolada de trabalho', async ({
+  page,
+}) => {
+  const studyRequests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('purpose=STUDY')) {
+      studyRequests.push(request.url());
+    }
+  });
+
+  await page.goto('/?view=list');
+  await page
+    .getByRole('combobox', { name: 'Finalidade' })
+    .selectOption('STUDY');
+  await expect(page.getByText('Dados publicados para 2025')).toBeVisible();
+  await page.getByRole('button', { name: 'Espanha ESP' }).click();
+
+  await expect(
+    page.getByText('Primeiras autorizações de residência por educação'),
+  ).toBeVisible();
+  await expect(page.locator('.metric-value').first()).toContainText('24');
+  await page.getByRole('tab', { name: 'Histórico' }).click();
+  await expect(
+    page.getByRole('img', {
+      name: 'Série histórica com 2 valores disponíveis',
+    }),
+  ).toBeVisible();
+  await page.locator('[aria-label^="2024:"]').hover();
+  await expect(page.getByRole('tooltip')).toContainText('18 PER');
+  await expect(page.getByRole('tooltip').locator('text').last()).toHaveCSS(
+    'fill',
+    'rgb(255, 255, 255)',
+  );
+  expect(studyRequests.length).toBeGreaterThanOrEqual(3);
+});
+
+test('exibe estudo no Reino Unido e Canadá com métricas semanticamente corretas', async ({
+  page,
+}) => {
+  await page.goto('/?view=list');
+  await page
+    .getByRole('combobox', { name: 'Finalidade' })
+    .selectOption('STUDY');
+
+  await page.getByRole('button', { name: 'Reino Unido GBR' }).click();
+  await expect(
+    page.getByText('Solicitações de visto de estudo recebidas'),
+  ).toBeVisible();
+  await expect(page.locator('.metric-value').first()).toContainText('60');
+  await expect(
+    page.getByText(/solicitações recebidas não equivalem a vistos concedidos/i),
+  ).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Canadá CAN' }).click();
+  await expect(
+    page.getByText('Titulares de permissão de estudo válida'),
+  ).toBeVisible();
+  await expect(page.locator('.metric-value').first()).toContainText('12.775');
+});
+
 test('abre país do catálogo mundial sem observação como indisponível, não como erro', async ({
   page,
 }) => {
@@ -104,7 +165,7 @@ test('separa Europa, Reino Unido e Canadá usando respostas reais da API', async
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Canadá' })).toBeVisible();
   await expect(
-    page.getByText('Primeiras autorizações de residência concedidas'),
+    page.getByText('Primeiras autorizações de residência por trabalho'),
   ).toBeVisible();
   await expect(page.getByText('Vistos de trabalho emitidos')).toBeVisible();
   await expect(

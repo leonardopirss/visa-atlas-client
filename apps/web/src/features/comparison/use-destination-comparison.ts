@@ -23,7 +23,11 @@ export function useDestinationComparison(
         iso3,
         citizenship: filters.citizenship,
         purpose: filters.purpose,
-        metricType: metricForDestination(iso3, filters.metricType),
+        metricType: metricForDestination(
+          iso3,
+          filters.metricType,
+          filters.purpose,
+        ),
         year: null,
         comparisonGroupId: null,
       }),
