@@ -17,6 +17,20 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: 'history', label: 'Histórico' },
 ];
 
+const SPONSORSHIP_LABELS = {
+  REQUIRED: 'Obrigatório',
+  NOT_REQUIRED: 'Não obrigatório',
+  DEPENDS: 'Depende da modalidade',
+  UNKNOWN: 'Não informado',
+} as const;
+
+function formatVerificationDate(value: string | null): string {
+  if (value === null) return 'Não informada';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Não informada';
+  return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium' }).format(date);
+}
+
 export function CountryTabs({
   detail,
   filters,
@@ -95,40 +109,63 @@ export function CountryTabs({
             )}
           </div>
         )}
-        {activeTab === 'programs' &&
-          (detail.visaPrograms.length === 0 ? (
-            <p className="empty-state">
-              Nenhuma modalidade verificada foi publicada para este país.
-            </p>
-          ) : (
-            <div className="program-list">
-              {detail.visaPrograms.map((program) => (
-                <article key={program.id}>
-                  <h3>{program.title}</h3>
-                  {program.summary !== null && <p>{program.summary}</p>}
-                  <dl>
-                    <div>
-                      <dt>Patrocínio</dt>
-                      <dd>{program.sponsorshipRequirement}</dd>
-                    </div>
-                    <div>
-                      <dt>Verificação</dt>
-                      <dd>{program.verifiedAt ?? 'Não informada'}</dd>
-                    </div>
-                  </dl>
-                  {safeExternalUrl(program.officialUrl) !== null && (
-                    <a
-                      href={safeExternalUrl(program.officialUrl) ?? undefined}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Página oficial ↗
-                    </a>
-                  )}
-                </article>
-              ))}
-            </div>
-          ))}
+        {activeTab === 'programs' && (
+          <div className="program-content">
+            <header className="program-intro">
+              <span className="eyebrow">Modalidades de trabalho</span>
+              <h3>Opções verificadas para {detail.country.name}</h3>
+              <p>
+                Esta área reúne somente modalidades publicadas com referência
+                oficial. Patrocínio e data de verificação são exibidos sem
+                estimar elegibilidade ou chance de aprovação.
+              </p>
+            </header>
+            {detail.visaPrograms.length === 0 ? (
+              <p className="empty-state">
+                Ainda não há modalidades verificadas publicadas para este país.
+                Consulte a aba Fontes para conferir os dados oficiais
+                disponíveis.
+              </p>
+            ) : (
+              <div className="program-list">
+                {detail.visaPrograms.map((program) => {
+                  const officialUrl = safeExternalUrl(program.officialUrl);
+                  return (
+                    <article key={program.id}>
+                      <span className="program-purpose">Trabalho</span>
+                      <h3>{program.title}</h3>
+                      {program.summary !== null &&
+                        program.summary !== undefined && (
+                          <p>{program.summary}</p>
+                        )}
+                      <dl>
+                        <div>
+                          <dt>Patrocínio</dt>
+                          <dd>
+                            {SPONSORSHIP_LABELS[program.sponsorshipRequirement]}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Verificado em</dt>
+                          <dd>{formatVerificationDate(program.verifiedAt)}</dd>
+                        </div>
+                      </dl>
+                      {officialUrl !== null && (
+                        <a
+                          href={officialUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Consultar página oficial ↗
+                        </a>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
         {activeTab === 'sources' &&
           (detail.sources.length === 0 ? (
             <p className="empty-state">

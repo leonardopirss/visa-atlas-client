@@ -894,6 +894,24 @@ main {
   display: grid;
   gap: 10px;
 }
+.program-content {
+  display: grid;
+  gap: 14px;
+}
+.program-intro {
+  padding: 0 2px;
+}
+.program-intro h3 {
+  margin: 6px 0;
+  color: #eef6f2;
+  font-size: 17px;
+}
+.program-intro p {
+  margin: 0;
+  color: #9fb2a8;
+  font-size: 11px;
+  line-height: 1.55;
+}
 .source-badge,
 .program-list article {
   padding: 15px;
@@ -939,6 +957,18 @@ main {
 .program-list h3 {
   margin: 0 0 8px;
   font-size: 16px;
+}
+.program-purpose {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #8aefb9;
+  background: rgba(48, 216, 131, 0.11);
+  font-size: 9px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 .program-list p {
   color: #acbdb4;

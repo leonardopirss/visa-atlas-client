@@ -5,6 +5,19 @@ test.beforeEach(async ({ page }) => {
   await installSyntheticApi(page);
 });
 
+test('filtra a cobertura pelo indicador selecionado', async ({ page }) => {
+  await page.goto('/?view=list');
+  await expect(page.getByText('Com dados (2)')).toBeVisible();
+
+  await page
+    .getByRole('combobox', { name: 'Indicador estatístico' })
+    .selectOption('VALID_PERMIT_HOLDERS');
+
+  await expect(page.getByText('Com dados (1)')).toBeVisible();
+  await expect(page.getByText('Sem dados (3)')).toBeVisible();
+  await expect(page.getByText('Dados disponíveis').first()).toBeVisible();
+});
+
 test('seleciona, troca e limpa o país mantendo filtros', async ({ page }) => {
   await page.goto('/?view=list');
   await expect(page.getByText('Dados publicados para 2025')).toBeVisible();
