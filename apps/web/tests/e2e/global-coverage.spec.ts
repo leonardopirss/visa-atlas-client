@@ -30,9 +30,14 @@ test('recolhe e reabre os filtros do mapa', async ({ page }) => {
 test('expõe legenda, badges e filtro de países com dados', async ({ page }) => {
   await page.goto('/?view=list');
 
-  await expect(page.getByText('Com dados (3)')).toBeVisible();
-  await expect(page.getByText('Sem dados (1)')).toBeVisible();
-  await expect(page.getByText('Ainda sem dados')).toBeVisible();
+  await expect(page.getByText('Com dados (2)')).toBeVisible();
+  await expect(page.getByText('Sem dados (2)')).toBeVisible();
+  await expect(page.getByRole('button', { name: /França FRA/ })).toContainText(
+    'Ainda sem dados',
+  );
+  await expect(page.getByRole('button', { name: /Canadá CAN/ })).toContainText(
+    'Ainda sem dados',
+  );
 
   await page
     .getByRole('checkbox', { name: 'Somente com dados' })
@@ -40,9 +45,10 @@ test('expõe legenda, badges e filtro de países com dados', async ({ page }) =>
     .check();
   await expect(page.getByRole('button', { name: /Espanha ESP/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /França FRA/ })).toBeHidden();
+  await expect(page.getByRole('button', { name: /Canadá CAN/ })).toBeHidden();
 });
 
-test('preserva a cobertura de Europa e Canadá ao alternar a seleção', async ({
+test('atualiza a cobertura ao alternar entre Europa e Canadá', async ({
   page,
 }) => {
   await page.goto('/?view=list');
@@ -50,7 +56,7 @@ test('preserva a cobertura de Europa e Canadá ao alternar a seleção', async (
   const spain = page.getByRole('button', { name: /Espanha ESP/ });
   const canada = page.getByRole('button', { name: /Canadá CAN/ });
   await expect(spain).toContainText('Dados disponíveis');
-  await expect(canada).toContainText('Dados disponíveis');
+  await expect(canada).toContainText('Ainda sem dados');
 
   await spain.click();
   await expect(
@@ -67,9 +73,10 @@ test('preserva a cobertura de Europa e Canadá ao alternar a seleção', async (
     .getByRole('button', { name: 'Fechar detalhes e retornar ao globo' })
     .click();
 
-  await expect(spain).toContainText('Dados disponíveis');
+  await expect(spain).toContainText('Ainda sem dados');
   await expect(canada).toContainText('Dados disponíveis');
-  await expect(page.getByText('Com dados (3)')).toBeVisible();
+  await expect(page.getByText('Com dados (1)')).toBeVisible();
+  await expect(page.getByText('Sem dados (3)')).toBeVisible();
 });
 
 test('explica ausência legítima sem oferecer retry de rede', async ({
