@@ -117,6 +117,9 @@ test('abre país do catálogo mundial sem observação como indisponível, não 
   page,
 }) => {
   await page.goto('/');
+  await page
+    .getByRole('combobox', { name: 'Finalidade' })
+    .selectOption('STUDY');
   const search = page.getByRole('combobox', {
     name: 'Buscar país de destino',
   });
@@ -125,6 +128,11 @@ test('abre país do catálogo mundial sem observação como indisponível, não 
   await page.getByRole('option', { name: 'Rússia RUS' }).click();
 
   await expect(page.getByRole('heading', { name: 'Rússia' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: 'País disponível, dado ainda não publicado',
+    }),
+  ).toBeVisible();
   await expect(
     page.getByText('Sem dado disponível para este recorte'),
   ).toBeVisible();
