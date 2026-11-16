@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import type { MetricType } from '@visa-atlas/contracts';
 import type { FilterState } from '../services/api/types';
 import {
   INITIAL_METRIC,
@@ -27,8 +28,11 @@ export const INITIAL_FILTERS: FilterState = {
   comparisonGroupId: null,
 };
 
+export type CoverageMetric = MetricType | 'ALL';
+
 type AppStateValue = {
   filters: FilterState;
+  coverageMetric: CoverageMetric;
   selectedCountryIso3: string | null;
   comparisonIso3s: readonly string[];
   view: AppView;
@@ -39,6 +43,7 @@ type AppStateValue = {
   openComparison: (iso3s: readonly string[]) => void;
   closeComparison: () => void;
   reconcileCatalog: (validIso3s: ReadonlySet<string>) => void;
+  selectCoverageMetric: (metric: CoverageMetric) => void;
   replaceFilters: (filters: FilterState) => void;
 };
 
@@ -56,6 +61,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         ? INITIAL_FILTERS.metricType
         : metricForDestination(initialNavigation.countryIso3),
   }));
+  const [coverageMetric, setCoverageMetric] = useState<CoverageMetric>('ALL');
   const [selectedCountryIso3, setSelectedCountryIso3] = useState<string | null>(
     initialNavigation.countryIso3,
   );
@@ -171,6 +177,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     (nextFilters: FilterState) => setFilters(nextFilters),
     [],
   );
+  const selectCoverageMetric = useCallback((metric: CoverageMetric) => {
+    setCoverageMetric(metric);
+    setFilters((current) => ({
+      ...current,
+      metricType: metric === 'ALL' ? INITIAL_METRIC : metric,
+      year: null,
+      comparisonGroupId: null,
+    }));
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -198,6 +213,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AppStateValue>(
     () => ({
       filters,
+      coverageMetric,
       selectedCountryIso3,
       comparisonIso3s,
       view,
@@ -208,17 +224,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       openComparison,
       closeComparison,
       reconcileCatalog,
+      selectCoverageMetric,
       replaceFilters,
     }),
     [
       clearSelection,
       closeComparison,
       comparisonIso3s,
+      coverageMetric,
       filters,
       openComparison,
       navigationNotice,
       reconcileCatalog,
       replaceFilters,
+      selectCoverageMetric,
       selectCountry,
       selectedCountryIso3,
       setView,

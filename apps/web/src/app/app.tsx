@@ -30,6 +30,7 @@ function Brand() {
 export function App() {
   const {
     filters,
+    coverageMetric,
     view,
     setView,
     comparisonIso3s,
@@ -41,7 +42,7 @@ export function App() {
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const listMode = view === 'list';
   const handleUnavailable = useCallback(() => setView('list'), [setView]);
-  const coverage = useCoverage(filters);
+  const coverage = useCoverage(filters, coverageMetric);
   const countryNamesByIso3 = useMemo(
     () =>
       Object.fromEntries(
