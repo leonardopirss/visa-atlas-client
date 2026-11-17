@@ -12,6 +12,7 @@ import visaAtlasIcon from '../assets/visa-atlas-icon.svg';
 import { AuditDialog } from '../features/audit/audit-dialog';
 import { ShortlistLauncher } from '../features/shortlist/components/shortlist-launcher';
 import { ComparisonScreen } from '../features/comparison/comparison-screen';
+import { ShareButton } from '../features/share/share-button';
 
 function Brand() {
   return (
@@ -35,6 +36,8 @@ export function App() {
     setView,
     comparisonIso3s,
     navigationNotice,
+    recentIso3s,
+    clearRecentDestinations,
     reconcileCatalog,
   } = useAppState();
   const { selectedCountryIso3, selectCountry } = useCountrySelection();
@@ -60,6 +63,30 @@ export function App() {
   const validatedComparisonIso3s = coverage.catalog.data
     ? comparisonIso3s.filter((iso3) => catalogIso3s.has(iso3))
     : comparisonIso3s;
+  const recentCountries = useMemo(() => {
+    const byIso3 = new Map(
+      (coverage.catalog.data ?? []).map((country) => [country.iso3, country]),
+    );
+    return recentIso3s.flatMap((iso3) => {
+      const country = byIso3.get(iso3);
+      return country === undefined ? [] : [country];
+    });
+  }, [coverage.catalog.data, recentIso3s]);
+  const suggestedIso3s = useMemo(
+    () =>
+      (coverage.catalog.data ?? [])
+        .filter(
+          (country) => coverage.summary.byIso3[country.iso3] === 'AVAILABLE',
+        )
+        .map((country) => country.iso3),
+    [coverage.catalog.data, coverage.summary.byIso3],
+  );
+  const suggestDestination = useCallback(() => {
+    if (suggestedIso3s.length === 0) return;
+    const index = Math.floor(Math.random() * suggestedIso3s.length);
+    const iso3 = suggestedIso3s[index];
+    if (iso3 !== undefined) selectCountry(iso3);
+  }, [selectCountry, suggestedIso3s]);
 
   useEffect(() => {
     if (coverage.catalog.data !== undefined) reconcileCatalog(catalogIso3s);
@@ -72,8 +99,11 @@ export function App() {
         <CountrySearch
           onSelect={selectCountry}
           coverageByIso3={coverage.summary.byIso3}
+          recentCountries={recentCountries}
+          onClearRecent={clearRecentDestinations}
         />
         <div className="topbar-actions">
+          {view !== 'compare' && <ShareButton />}
           <ShortlistLauncher countryNamesByIso3={countryNamesByIso3} />
           <button
             type="button"
@@ -163,6 +193,15 @@ export function App() {
               <h1>Explorar o mundo</h1>
               <p>Descubra vistos e oportunidades por país.</p>
               <FilterBar />
+              <button
+                type="button"
+                className="suggest-destination"
+                disabled={suggestedIso3s.length === 0}
+                onClick={suggestDestination}
+              >
+                <span aria-hidden="true">✦</span>
+                Sugerir um destino com dados
+              </button>
               <small>Arraste para girar o planeta</small>
             </div>
           </section>

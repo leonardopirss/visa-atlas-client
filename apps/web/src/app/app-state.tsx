@@ -19,6 +19,13 @@ import {
   writeNavigationState,
   type AppView,
 } from './navigation-state';
+import {
+  addRecentDestination,
+  createRecentDestinations,
+  readRecentDestinations,
+  writeRecentDestinations,
+  type RecentDestinations,
+} from '../features/recent/recent-destinations';
 
 export const INITIAL_FILTERS: FilterState = {
   citizenship: 'BRA',
@@ -37,6 +44,7 @@ type AppStateValue = {
   comparisonIso3s: readonly string[];
   view: AppView;
   navigationNotice: string;
+  recentIso3s: RecentDestinations;
   selectCountry: (iso3: string) => void;
   clearSelection: () => void;
   setView: (view: Exclude<AppView, 'compare'>) => void;
@@ -46,9 +54,19 @@ type AppStateValue = {
   selectCoverageMetric: (metric: CoverageMetric) => void;
   selectPurpose: (purpose: VisaPurpose) => void;
   replaceFilters: (filters: FilterState) => void;
+  clearRecentDestinations: () => void;
 };
 
 const AppStateContext = createContext<AppStateValue | null>(null);
+
+function browserStorage(): Storage | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const initialNavigation = useMemo(
@@ -71,7 +89,21 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   );
   const [view, setViewState] = useState<AppView>(initialNavigation.view);
   const [navigationNotice, setNavigationNotice] = useState('');
+  const [recentIso3s, setRecentIso3s] = useState<RecentDestinations>(() =>
+    createRecentDestinations([
+      initialNavigation.countryIso3,
+      ...readRecentDestinations(browserStorage()),
+    ]),
+  );
   const previousViewRef = useRef<Exclude<AppView, 'compare'>>('globe');
+
+  const rememberDestination = useCallback((iso3: string) => {
+    setRecentIso3s((current) => {
+      const next = addRecentDestination(current, iso3);
+      writeRecentDestinations(browserStorage(), next);
+      return next;
+    });
+  }, []);
 
   const selectCountry = useCallback(
     (iso3: string) => {
@@ -84,6 +116,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         { countryIso3: iso3, comparisonIso3s: [], view: nextView },
         'push',
       );
+      rememberDestination(iso3);
       setFilters((current) => {
         const metricType = metricForDestination(
           iso3,
@@ -94,7 +127,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         return { ...current, metricType, year: null, comparisonGroupId: null };
       });
     },
-    [view],
+    [rememberDestination, view],
   );
   const clearSelection = useCallback(() => {
     setSelectedCountryIso3(null);
@@ -182,6 +215,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     (nextFilters: FilterState) => setFilters(nextFilters),
     [],
   );
+  const clearRecentDestinations = useCallback(() => {
+    setRecentIso3s([]);
+    writeRecentDestinations(browserStorage(), []);
+  }, []);
   const selectCoverageMetric = useCallback((metric: CoverageMetric) => {
     setCoverageMetric(metric);
     setFilters((current) => ({
@@ -220,6 +257,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setComparisonIso3s(navigation.comparisonIso3s);
       setViewState(navigation.view);
       if (navigation.countryIso3 !== null) {
+        rememberDestination(navigation.countryIso3);
         setFilters((current) => ({
           ...current,
           metricType: metricForDestination(
@@ -234,7 +272,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [rememberDestination]);
 
   const value = useMemo<AppStateValue>(
     () => ({
@@ -244,6 +282,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       comparisonIso3s,
       view,
       navigationNotice,
+      recentIso3s,
       selectCountry,
       clearSelection,
       setView,
@@ -253,6 +292,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       selectCoverageMetric,
       selectPurpose,
       replaceFilters,
+      clearRecentDestinations,
     }),
     [
       clearSelection,
@@ -262,8 +302,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       filters,
       openComparison,
       navigationNotice,
+      recentIso3s,
       reconcileCatalog,
       replaceFilters,
+      clearRecentDestinations,
       selectCoverageMetric,
       selectPurpose,
       selectCountry,
