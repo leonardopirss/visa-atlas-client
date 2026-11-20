@@ -72,4 +72,46 @@ describe('FilterBar', () => {
       '"comparisonGroupId":null',
     );
   });
+
+  it('allows selecting an auditable approval rate', async () => {
+    const user = userEvent.setup();
+    render(
+      <AppStateProvider>
+        <FilterBar />
+        <FilterStateProbe />
+      </AppStateProvider>,
+    );
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Indicador estatístico' }),
+      'APPROVAL_RATE',
+    );
+
+    expect(screen.getByText(/"metricType":"APPROVAL_RATE"/)).toHaveTextContent(
+      '"populationBasis":"CITIZENSHIP"',
+    );
+    expect(screen.getByText(/"metricType":"APPROVAL_RATE"/)).toHaveTextContent(
+      '"programKey":"uk-entry-clearance:work"',
+    );
+  });
+
+  it('communicates when an indicator has national rather than citizenship scope', async () => {
+    const user = userEvent.setup();
+    render(
+      <AppStateProvider>
+        <FilterBar />
+        <FilterStateProbe />
+      </AppStateProvider>,
+    );
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Indicador estatístico' }),
+      'PENDING_APPLICATIONS',
+    );
+
+    expect(screen.getByText('Todos os requerentes')).toBeVisible();
+    expect(
+      screen.getByText(/"metricType":"PENDING_APPLICATIONS"/),
+    ).toHaveTextContent('"populationBasis":"NATIONAL"');
+  });
 });

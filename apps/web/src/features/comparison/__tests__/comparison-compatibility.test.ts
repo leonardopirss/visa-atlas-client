@@ -41,6 +41,60 @@ describe('comparison compatibility', () => {
     },
   );
 
+  it.each([
+    [
+      'population basis',
+      {
+        populationScope: {
+          basis: 'NATIONAL',
+          populationKey: 'ALL',
+          programKey: 'home-office:entry-clearance:work',
+          label: 'Todos os requerentes',
+        },
+      },
+    ],
+    [
+      'program',
+      {
+        populationScope: {
+          basis: 'CITIZENSHIP',
+          populationKey: 'BRA',
+          citizenshipIso3: 'BRA',
+          programKey: 'home-office:entry-clearance:study',
+          label: 'Brasil · estudo',
+        },
+      },
+    ],
+  ] satisfies Array<[string, Partial<Statistic>]>)(
+    'separa destinos quando o %s é incompatível',
+    (_dimension, overrides) => {
+      const scoped = statistic({
+        populationScope: {
+          basis: 'CITIZENSHIP',
+          populationKey: 'BRA',
+          citizenshipIso3: 'BRA',
+          programKey: 'home-office:entry-clearance:work',
+          label: 'Brasil · trabalho',
+        },
+      });
+      const groups = groupDestinationSnapshots([
+        {
+          iso3: 'GBR',
+          detail: countryDetailFixture('GBR', 'Reino Unido', scoped),
+        },
+        {
+          iso3: 'CAN',
+          detail: countryDetailFixture('CAN', 'Canadá', {
+            ...scoped,
+            ...overrides,
+          }),
+        },
+      ]);
+      expect(groups.comparable).toEqual([]);
+      expect(groups.separate.map(({ iso3 }) => iso3)).toEqual(['GBR', 'CAN']);
+    },
+  );
+
   it('mantém zero e ausência no mesmo grupo quando a semântica coincide', () => {
     const groups = groupDestinationSnapshots([
       { iso3: 'DEU', detail: countryDetailFixture('DEU', 'Alemanha') },

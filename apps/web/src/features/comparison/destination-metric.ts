@@ -7,12 +7,24 @@ const DESTINATION_METRICS: Readonly<Partial<Record<string, MetricType>>> = {
   GBR: 'WORK_VISAS_ISSUED',
 };
 
+const UK_DECISION_METRICS = new Set<MetricType>([
+  'DECISIONS_GRANTED',
+  'DECISIONS_REFUSED',
+  'DECISIONS_WITHDRAWN',
+  'DECISIONS_LAPSED',
+  'APPROVAL_RATE',
+  'REFUSAL_RATE',
+]);
+
 export function metricForDestination(
   iso3: string,
   current: MetricType = INITIAL_METRIC,
   purpose: VisaPurpose = 'WORK',
 ): MetricType {
   const normalizedIso3 = iso3.toUpperCase();
+  if (UK_DECISION_METRICS.has(current)) {
+    return current;
+  }
   if (normalizedIso3 === 'GBR' && purpose === 'STUDY') {
     return 'APPLICATIONS_RECEIVED';
   }

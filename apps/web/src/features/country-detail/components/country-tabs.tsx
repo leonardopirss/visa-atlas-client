@@ -1,7 +1,10 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
 import type { CountryDetail } from '@visa-atlas/contracts';
 import type { FilterState } from '../../../services/api/types';
-import { MetricHeadline } from '../../../components/ui/metric-headline';
+import {
+  formatMetricValue,
+  MetricHeadline,
+} from '../../../components/ui/metric-headline';
 import {
   safeExternalUrl,
   SourceBadge,
@@ -102,9 +105,7 @@ export function CountryTabs({
                     <strong>
                       {classification.statistic.value === null
                         ? 'Não disponível'
-                        : new Intl.NumberFormat('pt-BR').format(
-                            classification.statistic.value,
-                          )}
+                        : formatMetricValue(classification.statistic)}
                     </strong>
                   </div>
                 ))}

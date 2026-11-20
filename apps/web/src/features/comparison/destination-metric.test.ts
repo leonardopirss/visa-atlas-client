@@ -24,4 +24,8 @@ describe('metricForDestination', () => {
       'FIRST_RESIDENCE_PERMITS_GRANTED',
     );
   });
+
+  it('preserva uma taxa de decisão para explicitar ausência em outros destinos', () => {
+    expect(metricForDestination('CAN', 'APPROVAL_RATE')).toBe('APPROVAL_RATE');
+  });
 });

@@ -97,6 +97,9 @@ input:focus-visible {
   padding: 0 32px;
   background: linear-gradient(#030609 0%, rgba(3, 6, 9, 0.88) 70%, transparent);
 }
+.topbar:has(.shortlist-launcher[open]) {
+  z-index: 40;
+}
 .brand {
   display: inline-flex;
   align-items: center;
@@ -934,6 +937,30 @@ main {
 .metric-period {
   margin: 8px 0 12px;
   color: #80958a;
+  font-size: 11px;
+}
+.metric-scope {
+  margin: -4px 0 12px;
+  color: #9fb2a8;
+  font-size: 11px;
+}
+.metric-derivation {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.metric-formula {
+  margin: 0 0 10px;
+  color: #f2d695;
+  font-variant-numeric: tabular-nums;
+}
+.metric-derivation > p:not(.metric-formula) {
+  display: grid;
+  gap: 7px;
+  margin: 5px 0 0;
+  color: #9fb2a8;
   font-size: 11px;
 }
 .status-row {

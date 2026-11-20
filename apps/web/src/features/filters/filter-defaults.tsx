@@ -8,6 +8,8 @@ export function FilterDefaults() {
   const defaults = useQuery(
     defaultsQueryOptions({
       citizenship: filters.citizenship,
+      populationBasis: filters.populationBasis ?? 'CITIZENSHIP',
+      programKey: filters.programKey ?? 'ALL',
       purpose: filters.purpose,
       metricType: filters.metricType,
     }),
@@ -15,20 +17,26 @@ export function FilterDefaults() {
 
   useEffect(() => {
     if (defaults.data === undefined) return;
+    const resolvedCitizenship =
+      defaults.data.citizenship ?? filters.citizenship;
     if (
-      filters.citizenship === defaults.data.citizenship &&
+      filters.citizenship === resolvedCitizenship &&
       filters.purpose === defaults.data.purpose &&
       filters.year === defaults.data.year &&
       filters.metricType === defaults.data.metricType &&
+      filters.populationBasis === defaults.data.populationBasis &&
+      filters.programKey === defaults.data.programKey &&
       filters.comparisonGroupId === defaults.data.comparisonGroupId
     ) {
       return;
     }
     replaceFilters({
-      citizenship: defaults.data.citizenship,
+      citizenship: resolvedCitizenship,
       purpose: defaults.data.purpose,
       year: defaults.data.year,
       metricType: defaults.data.metricType,
+      populationBasis: defaults.data.populationBasis,
+      programKey: defaults.data.programKey,
       comparisonGroupId: defaults.data.comparisonGroupId,
     });
   }, [defaults.data, filters, replaceFilters]);

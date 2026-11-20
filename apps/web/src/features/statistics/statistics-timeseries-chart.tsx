@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { timeseriesQueryOptions } from '../../services/api/queries';
 import type { TimeseriesQuery } from '../../services/api/types';
 import { safeExternalUrl } from '../../components/ui/source-badge';
+import type { TimeseriesResponse } from '@visa-atlas/contracts';
 
 type StatisticsTimeseriesChartProps = {
   query: TimeseriesQuery;
@@ -17,6 +18,41 @@ function scaledChartPoints(values: Array<{ year: number; value: number }>) {
     const x = 24 + ((point.year - minimumYear) / yearRange) * 312;
     const y = 142 - (point.value / maximumValue) * 112;
     return { ...point, x, y };
+  });
+}
+
+function formatValue(value: number, unit: string): string {
+  if (unit === 'BASIS_POINTS') {
+    return `${new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value / 100)}%`;
+  }
+  return `${new Intl.NumberFormat('pt-BR').format(value)} ${unit}`.trim();
+}
+
+export function hasCompatibleTimeseriesScope(
+  data: TimeseriesResponse,
+): boolean {
+  const scopes = data.points.map(({ statistic }) => statistic.populationScope);
+  const hasExplicitScope = scopes.some((scope) => scope !== undefined);
+  if (hasExplicitScope && scopes.some((scope) => scope === undefined))
+    return false;
+  const firstUnit = data.points[0]?.statistic.unit;
+  return data.points.every(({ year, statistic }) => {
+    const scope = statistic.populationScope;
+    return (
+      statistic.metricType === data.metricType &&
+      statistic.period === String(year) &&
+      statistic.unit === firstUnit &&
+      (scope === undefined ||
+        (scope.basis === data.populationBasis &&
+          scope.programKey === data.programKey &&
+          (data.populationBasis === 'NATIONAL'
+            ? scope.basis === 'NATIONAL'
+            : scope.basis === 'CITIZENSHIP' &&
+              scope.citizenshipIso3 === data.citizenship)))
+    );
   });
 }
 
@@ -51,12 +87,20 @@ export function StatisticsTimeseriesChart({
       </p>
     );
   }
+  if (!hasCompatibleTimeseriesScope(timeseries.data)) {
+    return (
+      <p className="empty-state">
+        A série contém períodos, populações ou programas incompatíveis e não
+        pode ser agrupada.
+      </p>
+    );
+  }
   const first = available[0];
   const last = available.at(-1);
   const plotted = scaledChartPoints(available);
   const activePoint = plotted.find((point) => point.year === activeYear);
   const unit = timeseries.data.points[0]?.statistic.unit ?? '';
-  const numberFormatter = new Intl.NumberFormat('pt-BR');
+  const displayUnit = unit === 'BASIS_POINTS' ? '%' : unit;
 
   return (
     <section className="timeseries" aria-labelledby="timeseries-title">
@@ -67,7 +111,7 @@ export function StatisticsTimeseriesChart({
             {first?.year}–{last?.year}
           </h3>
         </div>
-        <span>{unit}</span>
+        <span>{displayUnit}</span>
       </div>
       <svg
         viewBox="0 0 360 170"
@@ -80,8 +124,7 @@ export function StatisticsTimeseriesChart({
           className="chart-line"
         />
         {plotted.map((point) => {
-          const label =
-            `${point.year}: ${numberFormatter.format(point.value)} ${unit}`.trim();
+          const label = `${point.year}: ${formatValue(point.value, unit)}`;
 
           return (
             <g
@@ -125,7 +168,7 @@ export function StatisticsTimeseriesChart({
               {activePoint.year}
             </text>
             <text y={activePoint.y >= 66 ? -24 : 49}>
-              {numberFormatter.format(activePoint.value)} {unit}
+              {formatValue(activePoint.value, unit)}
             </text>
           </g>
         )}
@@ -143,7 +186,11 @@ export function StatisticsTimeseriesChart({
           {timeseries.data.points.map((point) => (
             <tr key={point.year}>
               <td>{point.year}</td>
-              <td>{point.statistic.value ?? 'Não disponível'}</td>
+              <td>
+                {point.statistic.value === null
+                  ? 'Não disponível'
+                  : formatValue(point.statistic.value, point.statistic.unit)}
+              </td>
               <td>{point.statistic.dataStatus}</td>
             </tr>
           ))}

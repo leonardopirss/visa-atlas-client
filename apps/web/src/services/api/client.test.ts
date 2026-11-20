@@ -29,4 +29,31 @@ describe('VisaAtlas API client', () => {
     expect(requestedUrl).toContain('toYear=2025');
     expect(requestedUrl).not.toContain('comparisonGroupId');
   });
+
+  it('envia scope nacional sem rotulá-lo como cidadania brasileira', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify(timeseriesFixture), { status: 200 }),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await getCountryTimeseries({
+      iso3: 'CAN',
+      citizenship: 'BRA',
+      populationBasis: 'NATIONAL',
+      programKey: 'ALL',
+      purpose: 'STUDY',
+      metricType: 'PENDING_APPLICATIONS',
+      comparisonGroupId: null,
+    });
+
+    const requestedUrl = new URL(
+      String(fetchMock.mock.calls[0]?.[0]),
+      'http://localhost',
+    );
+    expect(requestedUrl.searchParams.get('populationBasis')).toBe('NATIONAL');
+    expect(requestedUrl.searchParams.get('programKey')).toBe('ALL');
+    expect(requestedUrl.searchParams.has('citizenship')).toBe(false);
+  });
 });
