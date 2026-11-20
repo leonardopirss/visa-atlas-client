@@ -97,6 +97,9 @@ input:focus-visible {
   padding: 0 32px;
   background: linear-gradient(#030609 0%, rgba(3, 6, 9, 0.88) 70%, transparent);
 }
+.topbar:has(.shortlist-launcher[open]) {
+  z-index: 40;
+}
 .brand {
   display: inline-flex;
   align-items: center;

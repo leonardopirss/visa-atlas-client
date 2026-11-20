@@ -127,13 +127,15 @@ export async function installSyntheticApi(page: Page) {
         json: {
           iso3: timeseriesMatch[1],
           citizenship: 'BRA',
+          populationBasis: 'CITIZENSHIP',
+          programKey: 'ALL',
           purpose: 'WORK',
           metricType: timeseriesStatistic.metricType,
           comparisonGroupId: timeseriesStatistic.comparisonGroupId,
           points: [
             {
               year: 2024,
-              statistic: timeseriesStatistic,
+              statistic: { ...timeseriesStatistic, period: '2024' },
             },
           ],
         },
