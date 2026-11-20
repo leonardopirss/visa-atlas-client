@@ -65,7 +65,7 @@ describe('comparison compatibility', () => {
         },
       },
     ],
-  ] satisfies Array<[string, Partial<Statistic>]>) (
+  ] satisfies Array<[string, Partial<Statistic>]>)(
     'separa destinos quando o %s é incompatível',
     (_dimension, overrides) => {
       const scoped = statistic({
