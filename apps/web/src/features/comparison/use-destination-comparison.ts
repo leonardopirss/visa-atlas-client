@@ -22,6 +22,8 @@ export function useDestinationComparison(
       countryDetailQueryOptions({
         iso3,
         citizenship: filters.citizenship,
+        populationBasis: filters.populationBasis ?? 'CITIZENSHIP',
+        programKey: filters.programKey ?? 'ALL',
         purpose: filters.purpose,
         metricType: metricForDestination(
           iso3,

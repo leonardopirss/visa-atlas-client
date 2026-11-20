@@ -25,6 +25,8 @@ const statistic = (value: number | null): Statistic => ({
 
 const mapResponse: MapStatisticsResponse = {
   citizenship: 'BRA',
+  populationBasis: 'CITIZENSHIP',
+  programKey: 'ALL',
   purpose: 'WORK',
   year: 2025,
   countries: [

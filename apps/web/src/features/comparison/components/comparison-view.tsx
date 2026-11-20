@@ -30,8 +30,8 @@ export function ComparisonView({
           <span className="eyebrow">Shortlist</span>
           <h1 id="comparison-title">Comparar destinos</h1>
           <p>
-            Valores só aparecem juntos quando métrica, unidade, período e
-            metodologia são compatíveis.
+            Valores só aparecem juntos quando métrica, unidade, período,
+            população, programa e metodologia são compatíveis.
           </p>
         </div>
         <div className="comparison-header-actions">
@@ -50,7 +50,10 @@ export function ComparisonView({
         >
           <div className="comparison-group-heading">
             <h2>Comparáveis entre si</h2>
-            <p>Mesmo indicador, unidade, período e grupo metodológico.</p>
+            <p>
+              Mesmo indicador, unidade, período, população, programa e grupo
+              metodológico.
+            </p>
           </div>
           <div className="comparison-grid">
             {group.map((snapshot) => (

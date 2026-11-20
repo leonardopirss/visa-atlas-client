@@ -5,11 +5,13 @@ export default defineConfig({
   testMatch:
     process.env.E2E_OFFICIAL === 'true'
       ? 'official-api-integration.spec.ts'
-      : 'api-integration.spec.ts',
+      : ['api-integration.spec.ts', 'visa-insights.spec.ts'],
   fullyParallel: false,
   forbidOnly: true,
   retries: 0,
   workers: 1,
+  timeout: 180_000,
+  expect: { timeout: 30_000 },
   reporter: 'list',
   use: {
     baseURL: 'http://127.0.0.1:4173',

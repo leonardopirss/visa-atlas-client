@@ -96,7 +96,7 @@ export interface components {
         /** @example ESP */
         Iso3: string;
         /** @enum {string} */
-        MetricType: "FIRST_RESIDENCE_PERMITS_GRANTED" | "WORK_VISAS_ISSUED" | "APPLICATIONS_RECEIVED" | "APPLICATIONS_REFUSED" | "DECISIONS_GRANTED" | "VALID_PERMIT_HOLDERS";
+        MetricType: "FIRST_RESIDENCE_PERMITS_GRANTED" | "WORK_VISAS_ISSUED" | "APPLICATIONS_RECEIVED" | "APPLICATIONS_REFUSED" | "DECISIONS_GRANTED" | "VALID_PERMIT_HOLDERS" | "DECISIONS_REFUSED" | "DECISIONS_WITHDRAWN" | "DECISIONS_LAPSED" | "APPROVAL_RATE" | "REFUSAL_RATE" | "PENDING_APPLICATIONS";
         /** @enum {string} */
         DataStatus: "AVAILABLE" | "UNAVAILABLE" | "SUPPRESSED" | "ESTIMATED" | "REVISED";
         /** @enum {string} */
@@ -114,6 +114,135 @@ export interface components {
             /** Format: date-time */
             publishedAt?: string | null;
         };
+        /** @enum {string} */
+        PopulationBasis: "CITIZENSHIP" | "NATIONAL";
+        PopulationScope: components["schemas"]["CitizenshipPopulationScope"] | components["schemas"]["NationalPopulationScope"];
+        CitizenshipPopulationScope: {
+            /** @enum {string} */
+            basis: "CITIZENSHIP";
+            populationKey: string;
+            citizenshipIso3: string;
+            programKey: string;
+            label: string;
+        };
+        NationalPopulationScope: {
+            /** @enum {string} */
+            basis: "NATIONAL";
+            /** @enum {string} */
+            populationKey: "ALL";
+            programKey: string;
+            label: string;
+        };
+        /** @enum {string} */
+        DerivationFormula: "APPROVAL_RATE" | "REFUSAL_RATE";
+        MetricDerivation: {
+            formula: components["schemas"]["DerivationFormula"];
+            numerator: components["schemas"]["DerivationOperand"][];
+            denominator: components["schemas"]["DerivationOperand"][];
+            precision: number;
+        };
+        DerivationOperand: {
+            observationId: string;
+            metricType: components["schemas"]["MetricType"];
+            /** Format: int64 */
+            value: number;
+            /** @enum {string} */
+            unit: "COUNT";
+            period: string;
+            releaseId: string;
+            comparisonGroupId: string;
+            sourceCategoryCode: string;
+            coefficient: number;
+        };
+        MeasurementMetadata: {
+            approximate: boolean;
+            roundingIncrement?: number | null;
+            precision?: number | null;
+        };
+        /** @enum {string} */
+        RequirementType: "APPLICATION_FEE" | "PROOF_OF_FUNDS" | "DEPENDANTS_ALLOWED" | "SPOUSE_WORK_RIGHT" | "RENEWABLE" | "PROCESSING_TIME_TARGET";
+        /** @enum {string} */
+        RequirementState: "YES" | "NO" | "DEPENDS" | "UNKNOWN";
+        MoneyRequirementValue: {
+            /** @enum {string} */
+            kind: "MONEY";
+            amount: string;
+            currency: string;
+            /** @enum {string} */
+            basis: "PER_APPLICATION" | "PER_PERSON" | "PER_MONTH" | "PER_YEAR" | "TOTAL";
+            maxPeriods?: number | null;
+        };
+        StateRequirementValue: {
+            /** @enum {string} */
+            kind: "STATE";
+            state: components["schemas"]["RequirementState"];
+        };
+        DurationRequirementValue: {
+            /** @enum {string} */
+            kind: "DURATION";
+            amount: number;
+            /** @enum {string} */
+            unit: "DAYS_CALENDAR" | "DAYS_BUSINESS" | "WEEKS" | "MONTHS" | "YEARS";
+        };
+        RequirementCondition: {
+            /** @enum {string} */
+            kind: "FAMILY_SIZE" | "GEOGRAPHIC_SCOPE" | "APPLICATION_LOCATION" | "APPLICATION_CONTEXT" | "PERSON_ROLE" | "DURATION_MONTHS" | "FUNDS_HOLDING_DAYS" | "PROGRAM_LEVEL" | "OCCUPATION_CLASS";
+            /** @enum {string} */
+            operator: "EQ" | "NOT_EQ" | "IN" | "GTE" | "LTE" | "GT";
+            value: string | number | string[];
+        };
+        RequirementSourceRef: components["schemas"]["SourceRef"] & {
+            releaseId: string;
+        };
+        VisaProgramRequirement: components["schemas"]["MoneyVisaProgramRequirement"] | components["schemas"]["StateVisaProgramRequirement"] | components["schemas"]["DurationVisaProgramRequirement"];
+        RequirementCommon: {
+            conditions: components["schemas"]["RequirementCondition"][];
+            conditionSchemaVersion: string;
+            conditionSummary?: string | null;
+            /** Format: date */
+            effectiveAt: string;
+            /** Format: date */
+            effectiveUntil?: string | null;
+            /** Format: date-time */
+            verifiedAt: string;
+            /** Format: uri */
+            officialUrl: string;
+            source: components["schemas"]["RequirementSourceRef"];
+        };
+        MoneyVisaProgramRequirement: components["schemas"]["RequirementCommon"] & {
+            /** @enum {string} */
+            type: "APPLICATION_FEE" | "PROOF_OF_FUNDS";
+            value: components["schemas"]["MoneyRequirementValue"];
+        };
+        StateVisaProgramRequirement: components["schemas"]["RequirementCommon"] & {
+            /** @enum {string} */
+            type: "DEPENDANTS_ALLOWED" | "SPOUSE_WORK_RIGHT" | "RENEWABLE";
+            value: components["schemas"]["StateRequirementValue"];
+        };
+        DurationVisaProgramRequirement: components["schemas"]["RequirementCommon"] & {
+            /** @enum {string} */
+            type: "PROCESSING_TIME_TARGET";
+            value: components["schemas"]["DurationRequirementValue"];
+        };
+        VisaProgramPathway: {
+            targetRouteCode: string;
+            /** @enum {string} */
+            pathwayType: "POST_STUDY_WORK" | "PERMANENT_RESIDENCE";
+            /** @enum {string} */
+            state: "YES" | "DEPENDS" | "UNKNOWN";
+            qualifyingPeriodMonths?: number | null;
+            conditions: components["schemas"]["RequirementCondition"][];
+            conditionSchemaVersion: string;
+            /** Format: date */
+            effectiveAt: string;
+            /** Format: date */
+            effectiveUntil?: string | null;
+            /** Format: date-time */
+            verifiedAt: string;
+            /** Format: uri */
+            officialUrl: string;
+            source: components["schemas"]["RequirementSourceRef"];
+        };
         Country: {
             iso3: components["schemas"]["Iso3"];
             iso2: string;
@@ -121,7 +250,10 @@ export interface components {
             region: string;
         };
         FilterDefaults: {
-            citizenship: components["schemas"]["Iso3"];
+            /** @description null somente quando populationBasis=NATIONAL foi solicitado explicitamente. */
+            citizenship: string | null;
+            populationBasis: components["schemas"]["PopulationBasis"];
+            programKey: string;
             /** @enum {string} */
             purpose: "WORK" | "STUDY";
             year: number | null;
@@ -146,13 +278,19 @@ export interface components {
             period: string;
             comparisonGroupId: string | null;
             source: components["schemas"]["SourceRef"] | null;
+            populationScope?: components["schemas"]["PopulationScope"];
+            derivation?: components["schemas"]["MetricDerivation"];
+            measurement?: components["schemas"]["MeasurementMetadata"];
         };
         MapCountry: {
             iso3: components["schemas"]["Iso3"];
             statistic: components["schemas"]["Statistic"];
         };
         MapStatisticsResponse: {
-            citizenship: components["schemas"]["Iso3"];
+            /** @description null somente quando populationBasis=NATIONAL foi solicitado explicitamente. */
+            citizenship: string | null;
+            populationBasis: components["schemas"]["PopulationBasis"];
+            programKey: string;
             /** @enum {string} */
             purpose: "WORK" | "STUDY";
             year: number | null;
@@ -171,6 +309,8 @@ export interface components {
             /** Format: date-time */
             verifiedAt: string | null;
             summary?: string | null;
+            requirements?: components["schemas"]["VisaProgramRequirement"][];
+            pathways?: components["schemas"]["VisaProgramPathway"][];
         };
         Classification: {
             sourceCategoryCode: string;
@@ -190,7 +330,10 @@ export interface components {
         };
         TimeseriesResponse: {
             iso3: components["schemas"]["Iso3"];
-            citizenship: components["schemas"]["Iso3"];
+            /** @description null somente quando populationBasis=NATIONAL foi solicitado explicitamente. */
+            citizenship: string | null;
+            populationBasis: components["schemas"]["PopulationBasis"];
+            programKey: string;
             /** @enum {string} */
             purpose: "WORK" | "STUDY";
             metricType: components["schemas"]["MetricType"];
@@ -244,6 +387,10 @@ export interface components {
     parameters: {
         Iso3: components["schemas"]["Iso3"];
         Citizenship: components["schemas"]["Iso3"];
+        /** @description Defaults to CITIZENSHIP. NATIONAL must omit citizenship and never falls back to BRA. */
+        PopulationBasis: components["schemas"]["PopulationBasis"];
+        /** @description Defaults to ALL; program-scoped data requires an explicit namespaced key. */
+        ProgramKey: string;
         Purpose: "WORK" | "STUDY";
         /** @description Na ausência, selecionar último ano comum validado */
         YearOptional: number;
@@ -260,6 +407,10 @@ export interface operations {
         parameters: {
             query?: {
                 citizenship?: components["parameters"]["Citizenship"];
+                /** @description Defaults to CITIZENSHIP. NATIONAL must omit citizenship and never falls back to BRA. */
+                populationBasis?: components["parameters"]["PopulationBasis"];
+                /** @description Defaults to ALL; program-scoped data requires an explicit namespaced key. */
+                programKey?: components["parameters"]["ProgramKey"];
                 purpose?: components["parameters"]["Purpose"];
                 metricType?: components["parameters"]["MetricType"];
             };
@@ -311,6 +462,10 @@ export interface operations {
         parameters: {
             query?: {
                 citizenship?: components["parameters"]["Citizenship"];
+                /** @description Defaults to CITIZENSHIP. NATIONAL must omit citizenship and never falls back to BRA. */
+                populationBasis?: components["parameters"]["PopulationBasis"];
+                /** @description Defaults to ALL; program-scoped data requires an explicit namespaced key. */
+                programKey?: components["parameters"]["ProgramKey"];
                 purpose?: components["parameters"]["Purpose"];
                 /** @description Na ausência, selecionar último ano comum validado */
                 year?: components["parameters"]["YearOptional"];
@@ -341,6 +496,10 @@ export interface operations {
         parameters: {
             query?: {
                 citizenship?: components["parameters"]["Citizenship"];
+                /** @description Defaults to CITIZENSHIP. NATIONAL must omit citizenship and never falls back to BRA. */
+                populationBasis?: components["parameters"]["PopulationBasis"];
+                /** @description Defaults to ALL; program-scoped data requires an explicit namespaced key. */
+                programKey?: components["parameters"]["ProgramKey"];
                 purpose?: components["parameters"]["Purpose"];
                 /** @description Na ausência, selecionar último ano comum validado */
                 year?: components["parameters"]["YearOptional"];
@@ -374,6 +533,10 @@ export interface operations {
         parameters: {
             query?: {
                 citizenship?: components["parameters"]["Citizenship"];
+                /** @description Defaults to CITIZENSHIP. NATIONAL must omit citizenship and never falls back to BRA. */
+                populationBasis?: components["parameters"]["PopulationBasis"];
+                /** @description Defaults to ALL; program-scoped data requires an explicit namespaced key. */
+                programKey?: components["parameters"]["ProgramKey"];
                 purpose?: components["parameters"]["Purpose"];
                 metricType?: components["parameters"]["MetricType"];
                 comparisonGroupId?: components["parameters"]["ComparisonGroupId"];

@@ -19,11 +19,18 @@ export function comparisonKey(statistic: Statistic): string | null {
   ) {
     return null;
   }
+  const populationScope = statistic.populationScope;
   return JSON.stringify([
     statistic.metricType,
     statistic.unit,
     statistic.period,
     statistic.comparisonGroupId,
+    populationScope?.basis ?? null,
+    populationScope?.populationKey ?? null,
+    populationScope?.basis === 'CITIZENSHIP'
+      ? populationScope.citizenshipIso3
+      : null,
+    populationScope?.programKey ?? null,
   ]);
 }
 

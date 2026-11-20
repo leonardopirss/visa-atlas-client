@@ -13,6 +13,7 @@ export type Freshness = components["schemas"]["Freshness"];
 export type MapStatisticsResponse =
   components["schemas"]["MapStatisticsResponse"];
 export type MetricType = components["schemas"]["MetricType"];
+export type PopulationBasis = components["schemas"]["PopulationBasis"];
 export type SourceRef = components["schemas"]["SourceRef"];
 export type Statistic = components["schemas"]["Statistic"];
 export type TimeseriesResponse = components["schemas"]["TimeseriesResponse"];

@@ -33,9 +33,31 @@ export const INITIAL_FILTERS: FilterState = {
   year: null,
   metricType: INITIAL_METRIC,
   comparisonGroupId: null,
+  populationBasis: 'CITIZENSHIP',
+  programKey: 'ALL',
 };
 
 export type CoverageMetric = MetricType | 'ALL';
+
+function scopeForMetric(metricType: MetricType, purpose: VisaPurpose) {
+  if (metricType === 'PENDING_APPLICATIONS') {
+    return { populationBasis: 'NATIONAL', programKey: 'ALL' } as const;
+  }
+  if (
+    metricType === 'DECISIONS_GRANTED' ||
+    metricType === 'DECISIONS_REFUSED' ||
+    metricType === 'DECISIONS_WITHDRAWN' ||
+    metricType === 'DECISIONS_LAPSED' ||
+    metricType === 'APPROVAL_RATE' ||
+    metricType === 'REFUSAL_RATE'
+  ) {
+    return {
+      populationBasis: 'CITIZENSHIP',
+      programKey: `uk-entry-clearance:${purpose.toLowerCase()}`,
+    } as const;
+  }
+  return { populationBasis: 'CITIZENSHIP', programKey: 'ALL' } as const;
+}
 
 type AppStateValue = {
   filters: FilterState;
@@ -124,7 +146,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           current.purpose,
         );
         if (metricType === current.metricType) return current;
-        return { ...current, metricType, year: null, comparisonGroupId: null };
+        return {
+          ...current,
+          metricType,
+          ...scopeForMetric(metricType, current.purpose),
+          year: null,
+          comparisonGroupId: null,
+        };
       });
     },
     [rememberDestination, view],
@@ -224,6 +252,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setFilters((current) => ({
       ...current,
       metricType: metric === 'ALL' ? INITIAL_METRIC : metric,
+      ...scopeForMetric(
+        metric === 'ALL' ? INITIAL_METRIC : metric,
+        current.purpose,
+      ),
       year: null,
       comparisonGroupId: null,
     }));
@@ -242,6 +274,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 INITIAL_METRIC,
                 purpose,
               ),
+        ...scopeForMetric(
+          selectedCountryIso3 === null
+            ? INITIAL_METRIC
+            : metricForDestination(
+                selectedCountryIso3,
+                INITIAL_METRIC,
+                purpose,
+              ),
+          purpose,
+        ),
         year: null,
         comparisonGroupId: null,
       }));
@@ -258,16 +300,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setViewState(navigation.view);
       if (navigation.countryIso3 !== null) {
         rememberDestination(navigation.countryIso3);
-        setFilters((current) => ({
-          ...current,
-          metricType: metricForDestination(
+        setFilters((current) => {
+          const metricType = metricForDestination(
             navigation.countryIso3 ?? '',
             current.metricType,
             current.purpose,
-          ),
-          year: null,
-          comparisonGroupId: null,
-        }));
+          );
+          return {
+            ...current,
+            metricType,
+            ...scopeForMetric(metricType, current.purpose),
+            year: null,
+            comparisonGroupId: null,
+          };
+        });
       }
     };
     window.addEventListener('popstate', handlePopState);

@@ -105,3 +105,62 @@ score, soma, vencedor ou probabilidade pessoal.
 
 A shortlist permanece local ao navegador e `compare=` representa apenas estado
 compartilhável da sessão. Nenhum desses estados é persistido pela API.
+
+## VDI-D001 — Indicadores de decisão, scope e requisitos versionados
+
+**Feature:** `008-visa-decision-insights`
+
+**Data:** 2026-11-16
+
+**Status:** Aprovado para merge contratual e testes RED; migration e ingestão
+continuam bloqueadas até o OpenAPI canônico ser atualizado, sincronizado e
+regenerado nos dois repositórios.
+
+### Decisões
+
+1. **Preservar cinco endpoints REST v1.** Não criar `/compare`, `/rates`,
+   `/requirements` ou rota de ingestão pública.
+2. **Adicionar somente métricas com fonte/semântica admitida na v1:**
+   `DECISIONS_REFUSED`, `DECISIONS_WITHDRAWN`, `DECISIONS_LAPSED`,
+   `APPROVAL_RATE`, `REFUSAL_RATE` e `PENDING_APPLICATIONS`. Mediana, P90, P80,
+   projeção e backlog share ficam fora até nova decisão.
+3. **Taxa é derivada e auditável.** Para o MVP UK `Vis_D02`, aprovação usa
+   issued/(issued+refused) e recusa usa refused/(issued+refused). Withdrawn e
+   lapsed permanecem outcomes brutos fora do denominador. O payload expõe
+   operandos com observation, release, comparison group, source category,
+   período e coefficient; nunca chama o denominador de total oficial de outcomes.
+4. **População e programa são ortogonais.** `PopulationBasis` é
+   `CITIZENSHIP|NATIONAL`; `programKey` é `ALL` ou chave namespaced. Requests
+   legados resolvem `CITIZENSHIP:<citizenship>/ALL`. NATIONAL exige seleção
+   explícita, omissão de `citizenship` e nunca é fallback para BRA.
+5. **Contexto resolvido aparece nos envelopes.** Filter defaults, mapa e
+   timeseries retornam `populationBasis` e `programKey`. `citizenship` torna-se
+   nullable somente para NATIONAL; respostas legadas continuam retornando ISO3.
+6. **Medição aproximada é explícita.** `Statistic.measurement` opcional carrega
+   aproximação, incremento de arredondamento e precisão quando a fonte não
+   publica contagem exata.
+7. **Requisitos são uniões discriminadas.** Fee/funds usam dinheiro decimal como
+   string e moeda/base; direitos/renovação usam estado; prazo-alvo usa duração e
+   unidade original. Condições seguem schema fechado/versionado. Texto curto é
+   apresentação e nunca regra de cálculo/comparação.
+8. **Requisitos e pathways têm release.** Cada fato/transição expõe source com
+   `releaseId` obrigatório, vigência em data civil, verificação e URL HTTP(S).
+   `VisaProgram.requirements`/`pathways` são opcionais na primeira versão e
+   retornam somente registros vigentes; histórico permanece auditável no banco.
+9. **Ausência não é UNKNOWN.** Ausência de registro significa não
+   publicado/disponível. `UNKNOWN` só é persistido quando a própria fonte afirma
+   indeterminação; `DEPENDS` exige condição tipada.
+
+### Compatibilidade e rollout
+
+A forma JSON das consultas legadas permanece igual, exceto pelos campos aditivos
+nos envelopes. Porém ampliar enum fechado e tornar `citizenship` nullable para a
+nova consulta NATIONAL pode quebrar consumidores TypeScript exaustivos. Portanto
+a mudança não é declarada incondicionalmente retrocompatível: backend, OpenAPI,
+pacote gerado, frontend, fixtures e testes devem ser entregues de forma
+coordenada. Consumidores antigos não devem solicitar NATIONAL antes de atualizar.
+
+O artefato de merge revisado está em
+`visa-atlas-server/specs/008-visa-decision-insights/contracts/openapi-visa-insights-delta.yaml`.
+T012 deve aplicar essas decisões ao OpenAPI canônico; o delta isolado não é
+contrato de produção.

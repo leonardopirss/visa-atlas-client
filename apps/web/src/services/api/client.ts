@@ -46,8 +46,20 @@ export class VisaAtlasApiError extends Error {
   }
 }
 
+function appendScope(
+  params: URLSearchParams,
+  filters: Pick<FilterState, 'citizenship' | 'populationBasis' | 'programKey'>,
+): void {
+  const populationBasis = filters.populationBasis ?? 'CITIZENSHIP';
+  params.set('populationBasis', populationBasis);
+  params.set('programKey', filters.programKey ?? 'ALL');
+  if (populationBasis === 'CITIZENSHIP') {
+    params.set('citizenship', filters.citizenship);
+  }
+}
+
 function appendFilters(params: URLSearchParams, filters: FilterState): void {
-  params.set('citizenship', filters.citizenship);
+  appendScope(params, filters);
   params.set('purpose', filters.purpose);
   params.set('metricType', filters.metricType);
   if (filters.year !== null) params.set('year', String(filters.year));
@@ -80,10 +92,10 @@ export async function getFilterDefaults(
   signal?: AbortSignal,
 ): Promise<FilterDefaults> {
   const params = new URLSearchParams({
-    citizenship: filters.citizenship,
     purpose: filters.purpose,
     metricType: filters.metricType,
   });
+  appendScope(params, filters);
   return parseFilterDefaults(
     await request(`/filters/defaults?${params.toString()}`, signal),
   );
